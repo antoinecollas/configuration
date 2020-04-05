@@ -12,10 +12,10 @@ Plugin 'gmarik/Vundle.vim'
 set nu
 
 " split navigations
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
+nnoremap <C-K> <C-W><C-J>
+nnoremap <C-L> <C-W><C-K>
+nnoremap <C-M> <C-W><C-L>
+nnoremap <C-J> <C-W><C-H>
 
 " UTF-8 encoding
 set encoding=utf-8
