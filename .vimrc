@@ -18,6 +18,10 @@ set nu
 vnoremap p pgvy
 vnoremap P Pgvy
 
+" split
+set splitbelow
+set splitright
+
 " split navigations
 nnoremap <C-K> <C-W><C-J>
 nnoremap <C-L> <C-W><C-K>
