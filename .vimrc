@@ -23,8 +23,8 @@ set splitbelow
 set splitright
 
 " split navigations
-nnoremap <C-K> <C-W><C-J>
-nnoremap <C-L> <C-W><C-K>
+nnoremap <C-L> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
 nnoremap <C-M> <C-W><C-L>
 nnoremap <C-J> <C-W><C-H>
 
@@ -33,8 +33,9 @@ set encoding=utf-8
 
 " Autocomplete
 Bundle 'Valloric/YouCompleteMe'
-let g:ycm_autoclose_preview_window_after_completion=1
+"let g:ycm_autoclose_preview_window_after_completion=1
 map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+map <leader>d  :YcmCompleter GetDoc<CR>
 
 " Python: Autoindent
 Plugin 'vim-scripts/indentpython.vim'
