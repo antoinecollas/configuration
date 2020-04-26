@@ -45,6 +45,11 @@ nmap <F5> <Esc>:wa<CR>:!clear;python %<CR>
 
 " Latex
 Plugin 'lervag/vimtex'
+if !exists('g:ycm_semantic_triggers')
+	let g:ycm_semantic_triggers = {}
+endif
+au VimEnter * let g:ycm_semantic_triggers.tex=g:vimtex#re#youcompleteme
+augroup VimCompletesMeTex
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
