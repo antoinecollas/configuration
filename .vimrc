@@ -18,6 +18,9 @@ set nu
 vnoremap p pgvy
 vnoremap P Pgvy
 
+" search visually selected text
+vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
+
 " split
 set splitbelow
 set splitright
