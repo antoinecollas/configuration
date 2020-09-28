@@ -53,6 +53,13 @@ if !exists('g:ycm_semantic_triggers')
 endif
 au VimEnter * let g:ycm_semantic_triggers.tex=g:vimtex#re#youcompleteme
 augroup VimCompletesMeTex
+let g:tex_flavor = 'latex'
+
+" Use ripgrep instead of grep
+set grepprg=rg\ --smart-case\ --vimgrep
+
+" Add package cfilter
+packadd cfilter
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
