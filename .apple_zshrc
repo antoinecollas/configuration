@@ -1,0 +1,37 @@
+# Path to your oh-my-zsh installation.
+export ZSH="/Users/antoinecollas/.oh-my-zsh"
+
+ZSH_THEME="robbyrussell"
+
+plugins=(git)
+
+source $ZSH/oh-my-zsh.sh
+
+# User configuration
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/collasa/libraries/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/collasa/libraries/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/collasa/libraries/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/collasa/libraries/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+export PATH=$PATH:~/julia/bin/
+
+export OPENBLAS_NUM_THREADS=1 
+
+export PATH=/usr/local/cuda/bin${PATH:+:${PATH}}$ 
+export LD_LIBRARY_PATH=/usr/local/cuda/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+
+alias ll='ls -al'
+
+# to get brew on Apple M1
+eval $(/opt/homebrew/bin/brew shellenv)
