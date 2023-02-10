@@ -19,7 +19,7 @@ export OPENBLAS_NUM_THREADS=1
 alias ll='ls -al'
 
 # CDPATH for cd command
-export CDPATH=~/Dropbox/PhD/:~/Dropbox/PhD/Riemannian_clustering
+export CDPATH=~/Dropbox/postdoc/
 
 
 # specific to linux
