@@ -40,7 +40,7 @@ let g:ycm_auto_trigger = 0
 imap <c-d> <plug>(YCMComplete)
 "let g:ycm_autoclose_preview_window_after_completion=1
 map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
-"map <leader>d  :YcmCompleter GetDoc<CR>
+map <leader>d  :YcmCompleter GetDoc<CR>
 
 " Python: Autoindent
 Plugin 'vim-scripts/indentpython.vim'
