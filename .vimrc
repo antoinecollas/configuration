@@ -60,6 +60,10 @@ let g:tex_flavor = 'latex'
 " Use ripgrep instead of grep
 set grepprg=rg\ --smart-case\ --vimgrep
 
+" Shortcut for previous and next when seaching
+nmap <F7> :cp<CR>
+nmap <F8> :cn<CR>
+
 " Add package cfilter
 packadd cfilter
 
