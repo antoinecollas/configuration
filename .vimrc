@@ -36,9 +36,9 @@ set encoding=utf-8
 
 " Autocomplete
 Bundle 'Valloric/YouCompleteMe'
-let g:ycm_auto_trigger = 0
+let g:ycm_auto_trigger = 1
 imap <c-d> <plug>(YCMComplete)
-"let g:ycm_autoclose_preview_window_after_completion=1
+let g:ycm_autoclose_preview_window_after_completion = 1
 map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
 map <leader>d  :YcmCompleter GetDoc<CR>
 
