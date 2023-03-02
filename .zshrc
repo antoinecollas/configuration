@@ -21,6 +21,9 @@ alias ll='ls -al'
 # CDPATH for cd command
 export CDPATH=~/Dropbox/postdoc/
 
+# Set ulimit
+ulimit -Sv 10000000	# 10GB
+
 
 # specific to linux
 
