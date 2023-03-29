@@ -21,6 +21,9 @@ vnoremap P Pgvy
 " search visually selected text
 vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
 
+" center cursor
+set scrolloff=999
+
 " split
 set splitbelow
 set splitright
