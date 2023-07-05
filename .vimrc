@@ -79,6 +79,18 @@ set cursorline
 " Highlight matching brackets
 set showmatch
 
+" airline
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+let g:airline#extensions#tagbar#flags = 'f'  " show full tag hierarchy
+
+" tagbar
+Plugin 'majutsushi/tagbar'
+nmap <F8> :TagbarToggle<CR>
+
+" flake8
+Plugin 'nvie/vim-flake8'
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
