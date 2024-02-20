@@ -91,6 +91,16 @@ nmap <F8> :TagbarToggle<CR>
 " flake8
 Plugin 'nvie/vim-flake8'
 
+" Vim-slide to use python interactively and use cells (delimited by #%%)
+let g:slime_target = "tmux"
+let g:slime_python_ipython = 1
+let g:slime_python_ipython_args = "--simple-prompt --pprint"
+let g:slime_dont_ask_default = 1
+let g:slime_default_config = {"socket_name": "default", "target_pane": "{top-right}"}
+let g:slime_cell_delimiter = "# %%"
+nmap <c-d><c-d> <Plug>SlimeSendCell
+filetype plugin on
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
