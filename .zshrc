@@ -27,6 +27,11 @@ export CDPATH=~/Dropbox/postdoc/
 # Set ulimit
 ulimit -Sv 100000000	# 10GB
 
+# squeue
+alias squeue_me='squeue -u acollas'
+alias squeue_all='squeue -u all'
+alias slurm_top="squeue -h -o '%.8u %.2C %.2t' -t R | awk '{arr[\$1]+=\$2} END {for (i in arr) {print i \": \" arr[i] \" cores\"}}' | sort -k2,2nr"
+
 
 # specific to linux
 
