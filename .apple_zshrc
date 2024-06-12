@@ -17,7 +17,7 @@ export NUMEXPR_NUM_THREADS=1
 export OMP_NUM_THREADS=1
 
 # ll command
-alias ll='ls -al'
+alias ll='ls -alh'
 
 # CDPATH for cd command
 export CDPATH=~/Dropbox/:~/Dropbox/postdoc/
