@@ -73,6 +73,9 @@ packadd cfilter
 " Highlight code
 syntax on
 
+" Automatically adjust splits when resizing
+autocmd VimResized * wincmd =
+
 " Highlight current line
 set cursorline
 
@@ -98,7 +101,7 @@ let g:slime_python_ipython_args = "--simple-prompt --pprint"
 let g:slime_dont_ask_default = 1
 let g:slime_default_config = {"socket_name": "default", "target_pane": "{top-right}"}
 let g:slime_cell_delimiter = "# %%"
-nmap <c-d><c-d> <Plug>SlimeSendCell
+nmap <c-e><c-e> <Plug>SlimeSendCell
 filetype plugin on
 
 " All of your Plugins must be added before the following line
