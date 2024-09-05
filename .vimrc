@@ -20,6 +20,13 @@ vnoremap P Pgvy
 
 " search visually selected text
 vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
+set incsearch
+set hlsearch
+nnoremap <silent> <leader>/ :noh<CR>
+
+" command history search
+cnoremap <C-P> <Up>
+cnoremap <C-N> <Down>
 
 " center cursor
 set scrolloff=999
