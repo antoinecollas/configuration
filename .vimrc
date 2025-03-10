@@ -45,7 +45,7 @@ nnoremap <C-J> <C-W><C-H>
 set encoding=utf-8
 
 " Autocomplete
-Bundle 'Valloric/YouCompleteMe'
+Plugin 'ycm-core/YouCompleteMe'
 let g:ycm_auto_trigger = 1
 imap <c-d> <plug>(YCMComplete)
 let g:ycm_autoclose_preview_window_after_completion = 0
@@ -92,6 +92,7 @@ set showmatch
 " airline
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
+let g:airline#extensions#tagbar#enabled = 1
 let g:airline#extensions#tagbar#flags = 'f'  " show full tag hierarchy
 
 " tagbar
@@ -114,3 +115,6 @@ filetype plugin on
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
+
+" Add ipdb debugger
+iabbrev ipdb import ipdb; ipdb.set_trace()

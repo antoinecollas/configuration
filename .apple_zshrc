@@ -42,3 +42,37 @@ else
 fi
 unset __conda_setup
 # <<< conda initialize <<<
+
+open_notebook() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: open_notebook notebook.ipynb"
+        return 1
+    fi
+
+    local notebook="$1"
+    local pdf_file="${notebook%.ipynb}.pdf"
+
+    # Check if the input file exists
+    if [ ! -f "$notebook" ]; then
+        echo "Error: File '$notebook' not found!"
+        return 1
+    fi
+
+    # Convert the notebook to PDF using nbconvert
+    jupyter nbconvert --to pdf "$notebook"
+
+    if [ $? -eq 0 ]; then
+        echo "PDF successfully created: $pdf_file"
+
+        # Open the PDF file
+        if command -v xdg-open &> /dev/null; then
+            xdg-open "$pdf_file"
+        elif command -v open &> /dev/null; then
+            open "$pdf_file"
+        else
+            echo "Error: No suitable PDF viewer found!"
+        fi
+    else
+        echo "Error: Failed to convert '$notebook' to PDF."
+    fi
+}
