@@ -78,21 +78,16 @@ require("lazy").setup({
 				})
 
 				-- setup must be called before loading
-				vim.cmd.colorscheme "catppuccin"
+				vim.cmd.colorscheme "catppuccin-mocha"
 			end,
 		},
 
 		-- === Copilot ===
 		{
-			"zbirenbaum/copilot.lua",
-			cmd = "Copilot",
-			build = ":Copilot auth",
-			config = function()
-				require("copilot").setup({
-					suggestion = { enabled = true, auto_trigger = true },
-					panel = { enabled = false },
-				})
-			end,
+			{
+				"github/copilot.vim",
+				lazy = false, -- must be eagerly loaded
+			},
 		},
 
 		-- === LSP ===
@@ -151,12 +146,6 @@ map("n", "<F8>", ":cn<CR>", opts)
 vim.cmd([[iabbrev ipdb import ipdb; ipdb.set_trace()]])
 vim.api.nvim_create_autocmd("VimResized", {
 	callback = function() vim.cmd("wincmd =") end,
-})
-
--- === Copilot Keybinding ===
-vim.g.copilot_no_tab_map = true
-vim.api.nvim_set_keymap("i", "<C-J>", 'copilot#Accept("<CR>")', {
-	expr = true, silent = true, noremap = true,
 })
 
 -- === LSP: Python support ===
