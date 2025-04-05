@@ -82,12 +82,23 @@ require("lazy").setup({
 			end,
 		},
 
+		-- === Treesitter ===
+		{
+			"nvim-treesitter/nvim-treesitter",
+			build = ":TSUpdate",
+			config = function()
+				require("nvim-treesitter.configs").setup({
+					ensure_installed = { "python", "lua", "bash", "json", "markdown", "yaml" },
+					highlight = { enable = true },
+					indent = { enable = true },
+				})
+			end,
+		},
+
 		-- === Copilot ===
 		{
-			{
-				"github/copilot.vim",
-				lazy = false, -- must be eagerly loaded
-			},
+			"github/copilot.vim",
+			lazy = false, -- must be eagerly loaded
 		},
 
 		-- === LSP ===
