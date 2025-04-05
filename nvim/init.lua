@@ -126,6 +126,7 @@ vim.opt.incsearch = true
 vim.opt.cursorline = true
 vim.opt.showmatch = true
 vim.opt.grepprg = "rg --smart-case --vimgrep"
+vim.opt.signcolumn = "yes"
 
 -- === Keybindings ===
 local map = vim.keymap.set
