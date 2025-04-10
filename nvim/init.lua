@@ -106,7 +106,7 @@ require("lazy").setup({
 		{ "ray-x/lsp_signature.nvim", config = function()
 			require("lsp_signature").setup({ hint_prefix = "→ " })
 		end },
-		
+
 		-- === Autocompletion ===
 		{ "hrsh7th/nvim-cmp" },
 		{ "hrsh7th/cmp-nvim-lsp" },
@@ -158,7 +158,10 @@ vim.api.nvim_create_autocmd("VimResized", {
 
 -- === LSP: Python via Jedi (runtime-aware resolution) ===
 require("lspconfig").jedi_language_server.setup({
-	on_attach = function(_, bufnr)
+	on_attach = function(client, bufnr)
+		-- Disable lsp_signature for Jedi (known issue)
+		client.server_capabilities.signatureHelpProvider = false
+
 		local map = function(keys, func, desc)
 			vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
 		end
@@ -185,6 +188,6 @@ cmp.setup({
 		{ name = "nvim_lsp" },
 		{ name = "luasnip" },
 	}, {
-		{ name = "buffer" },
-	}),
+			{ name = "buffer" },
+		}),
 })
