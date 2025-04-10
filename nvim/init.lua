@@ -103,7 +103,10 @@ require("lazy").setup({
 
 		-- === LSP ===
 		{ "neovim/nvim-lspconfig" },
-
+		{ "ray-x/lsp_signature.nvim", config = function()
+			require("lsp_signature").setup({ hint_prefix = "→ " })
+		end },
+		
 		-- === Autocompletion ===
 		{ "hrsh7th/nvim-cmp" },
 		{ "hrsh7th/cmp-nvim-lsp" },
@@ -112,14 +115,6 @@ require("lazy").setup({
 		{ "hrsh7th/cmp-cmdline" },
 		{ "L3MON4D3/LuaSnip" },
 		{ "saadparwaiz1/cmp_luasnip" },
-		{
-			"ray-x/lsp_signature.nvim",
-			config = function()
-				require("lsp_signature").setup({
-					hint_prefix = "→ ",  -- nice subtle arrow
-				})
-			end,
-		}
 	},
 	install = { colorscheme = { "catppuccin" } },
 	checker = { enabled = true },
@@ -142,7 +137,6 @@ vim.opt.signcolumn = "yes"
 -- === Keybindings ===
 local map = vim.keymap.set
 local opts = { noremap = true, silent = true }
-
 map("v", "p", "pgvy", opts)
 map("v", "P", "Pgvy", opts)
 vim.cmd([[vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>]])
@@ -157,16 +151,13 @@ map("n", "<F7>", ":cp<CR>", opts)
 map("n", "<F8>", ":cn<CR>", opts)
 vim.api.nvim_create_user_command('E', 'Explore', {})
 vim.cmd([[iabbrev ipdb import ipdb; ipdb.set_trace()]])
+
 vim.api.nvim_create_autocmd("VimResized", {
 	callback = function() vim.cmd("wincmd =") end,
 })
-vim.api.nvim_create_autocmd("VimResized", {
-	pattern = "*",
-	command = "wincmd ="
-})
 
--- === LSP: Python support ===
-require("lspconfig").pyright.setup({
+-- === LSP: Python via Jedi (runtime-aware resolution) ===
+require("lspconfig").jedi_language_server.setup({
 	on_attach = function(_, bufnr)
 		local map = function(keys, func, desc)
 			vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
@@ -176,11 +167,6 @@ require("lspconfig").pyright.setup({
 		map("<leader>d", vim.lsp.buf.hover, "Show Hover")
 		map("<leader>i", vim.lsp.buf.implementation, "Go to Implementation")
 	end,
-	settings = {
-		python = {
-			pythonPath = vim.fn.exepath("python")  -- dynamically resolves `which python`
-		}
-	}
 })
 
 -- === nvim-cmp setup ===
@@ -199,6 +185,6 @@ cmp.setup({
 		{ name = "nvim_lsp" },
 		{ name = "luasnip" },
 	}, {
-			{ name = "buffer" },
-		}),
+		{ name = "buffer" },
+	}),
 })
