@@ -155,13 +155,33 @@ map("n", "<C-M>", "<C-W><C-L>", opts)
 map("n", "<C-J>", "<C-W><C-H>", opts)
 map("n", "<F7>", ":cp<CR>", opts)
 map("n", "<F8>", ":cn<CR>", opts)
+vim.api.nvim_create_user_command('E', 'Explore', {})
 vim.cmd([[iabbrev ipdb import ipdb; ipdb.set_trace()]])
 vim.api.nvim_create_autocmd("VimResized", {
 	callback = function() vim.cmd("wincmd =") end,
 })
+vim.api.nvim_create_autocmd("VimResized", {
+	pattern = "*",
+	command = "wincmd ="
+})
 
 -- === LSP: Python support ===
-require("lspconfig").pyright.setup({})
+require("lspconfig").pyright.setup({
+	on_attach = function(_, bufnr)
+		local map = function(keys, func, desc)
+			vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
+		end
+		map("<leader>g", vim.lsp.buf.definition, "Go to Definition")
+		map("<leader>r", vim.lsp.buf.references, "Find References")
+		map("<leader>d", vim.lsp.buf.hover, "Show Hover")
+		map("<leader>i", vim.lsp.buf.implementation, "Go to Implementation")
+	end,
+	settings = {
+		python = {
+			pythonPath = vim.fn.exepath("python")  -- dynamically resolves `which python`
+		}
+	}
+})
 
 -- === nvim-cmp setup ===
 local cmp = require("cmp")
@@ -179,6 +199,6 @@ cmp.setup({
 		{ name = "nvim_lsp" },
 		{ name = "luasnip" },
 	}, {
-		{ name = "buffer" },
-	}),
+			{ name = "buffer" },
+		}),
 })
