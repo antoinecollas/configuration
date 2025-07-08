@@ -22,26 +22,25 @@ alias ll='ls -alh'
 # CDPATH for cd command
 export CDPATH=~/Dropbox/:~/Dropbox/postdoc/
 
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/Users/antoinecollas/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/Users/antoinecollas/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/antoinecollas/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/Users/antoinecollas/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
 
 # specific to Apple
 
 # to get brew on Apple M1
 eval $(/opt/homebrew/bin/brew shellenv)
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/Users/antoinecollas/miniforge3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/Users/antoinecollas/miniforge3/etc/profile.d/conda.sh" ]; then
-        . "/Users/antoinecollas/miniforge3/etc/profile.d/conda.sh"
-    else
-        export PATH="/Users/antoinecollas/miniforge3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
 
 open_notebook() {
     if [ $# -eq 0 ]; then
