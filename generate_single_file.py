@@ -22,7 +22,7 @@ def walk_repo_and_flatten(repo_root):
 
         for file in files:
             filepath = os.path.join(root, file)
-            relpath = os.path.relpath(filepath, repo_root)
+            relpath = os.path.relpath(filepath, start=os.path.abspath(repo_root))
             if should_include_file(file):
                 try:
                     with open(filepath, "r", encoding="utf-8") as f:
