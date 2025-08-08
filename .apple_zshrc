@@ -1,5 +1,5 @@
 # Path to your oh-my-zsh installation.
-export ZSH="/Users/antoinecollas/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 ZSH_THEME="robbyrussell"
 
@@ -19,29 +19,31 @@ export OMP_NUM_THREADS=1
 # ll command
 alias ll='ls -alh'
 
+# Load host-specific additions
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
+
 # CDPATH for cd command
 export CDPATH=~/Dropbox/:~/Dropbox/postdoc/
 
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('$HOME/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "$HOME/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="$HOME/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
 
 # specific to Apple
 
 # to get brew on Apple M1
 eval $(/opt/homebrew/bin/brew shellenv)
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/Users/antoinecollas/miniforge3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/Users/antoinecollas/miniforge3/etc/profile.d/conda.sh" ]; then
-        . "/Users/antoinecollas/miniforge3/etc/profile.d/conda.sh"
-    else
-        export PATH="/Users/antoinecollas/miniforge3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
 
 open_notebook() {
     if [ $# -eq 0 ]; then
