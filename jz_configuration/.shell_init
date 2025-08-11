@@ -11,18 +11,10 @@ export TORCHINDUCTOR_CACHE_DIR=$WORK/torchinductor_cache
 # ll command
 alias ll='ls -alh'
 
-# Run only in interactive shells; skip batch sbatch jobs
-case $- in *i*) :;; *) return;; esac
-if [[ -n "$SLURM_JOB_ID" && -z "$SLURM_INTERACTIVE" ]]; then return; fi
-
 # Modules
-if command -v module >/dev/null 2>&1; then
-  module purge
-  if module show arch/h100 >/dev/null 2>&1; then
-    module load arch/h100
-  fi
-  module load pytorch-gpu/py3/2.7.0
-fi
+module purge
+module load arch/h100
+module load pytorch-gpu/py3/2.7.0
 
 # Working dir + banner
 TARGET="$WORK"
