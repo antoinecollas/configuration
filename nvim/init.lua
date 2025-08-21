@@ -19,6 +19,16 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
+-- Quickfix/Location list: Enter opens the selected entry; q closes the list
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "qf",
+  callback = function(ev)
+    local o = { buffer = ev.buf, silent = true }
+    vim.keymap.set("n", "<CR>", "<CR>", o)
+    vim.keymap.set("n", "q", "<cmd>cclose<CR>", o)
+  end,
+})
+
 -- Setup plugins
 require("lazy").setup({
 	spec = {
