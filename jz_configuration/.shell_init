@@ -1,3 +1,8 @@
+# Skip for non-interactive shells (rsync/scp/ssh commands)
+if [ -z "$PS1" ]; then
+  return 0 2>/dev/null || exit 0
+fi
+
 # User configuration
 
 # openblas
