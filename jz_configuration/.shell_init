@@ -22,6 +22,9 @@ module load arch/h100
 module load pytorch-gpu/py3/2.7.0
 
 # Working dir + banner
-TARGET="$WORK"
+TARGET="$WORK/karavela/decoding-nsd"
 [[ -d "$TARGET" ]] && cd "$TARGET"
 echo "Connected on node $(hostname -s) at $(pwd)"
+
+# Add $HOME/.local/bin to PATH
+export PATH="$HOME/.local/bin:$PATH"
