@@ -111,6 +111,10 @@ require("lazy").setup({
 			lazy = false, -- must be eagerly loaded
 		},
 
+		-- === Git ===
+		{ "tpope/vim-fugitive" },
+		{ "lewis6991/gitsigns.nvim", opts = {} },
+
 		-- === LSP ===
 		{ "neovim/nvim-lspconfig" },
 		{ "ray-x/lsp_signature.nvim", config = function()
@@ -161,6 +165,13 @@ map("n", "<F7>", ":cp<CR>", opts)
 map("n", "<F8>", ":cn<CR>", opts)
 vim.api.nvim_create_user_command('E', 'Explore', {})
 vim.cmd([[iabbrev ipdb import ipdb; ipdb.set_trace()]])
+
+-- Git: fugitive keymaps
+vim.keymap.set("n", "<leader>gs", ":Gstatus<CR>", { desc = "Git status" })
+vim.keymap.set("n", "<leader>gc", ":Gcommit<CR>", { desc = "Git commit" })
+vim.keymap.set("n", "<leader>gp", ":Gpush<CR>",   { desc = "Git push" })
+vim.keymap.set("n", "<leader>gl", ":Gpull<CR>",   { desc = "Git pull" })
+vim.keymap.set("n", "<leader>gb", ":Gblame<CR>",  { desc = "Git blame" })
 
 vim.api.nvim_create_autocmd("VimResized", {
 	callback = function() vim.cmd("wincmd =") end,
