@@ -22,8 +22,11 @@ alias ll='ls -alh'
 # Load host-specific additions
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
 
-# CDPATH for cd command
-export CDPATH=~/Dropbox/:~/Dropbox/postdoc/
+# Add remote_scripts to PATH
+export PATH="$HOME/Dropbox/karavela/remote_scripts:$PATH"
+alias jzpush='rclone_jz.sh'
+alias jzmount='mount_jz.sh'
+alias jzumount='umount_jz.sh'
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
