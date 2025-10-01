@@ -166,12 +166,12 @@ map("n", "<F8>", ":cn<CR>", opts)
 vim.api.nvim_create_user_command('E', 'Explore', {})
 vim.cmd([[iabbrev ipdb import ipdb; ipdb.set_trace()]])
 
--- Git: fugitive keymaps
-vim.keymap.set("n", "<leader>gs", ":Gstatus<CR>", { desc = "Git status" })
-vim.keymap.set("n", "<leader>gc", ":Gcommit<CR>", { desc = "Git commit" })
-vim.keymap.set("n", "<leader>gp", ":Gpush<CR>",   { desc = "Git push" })
-vim.keymap.set("n", "<leader>gl", ":Gpull<CR>",   { desc = "Git pull" })
-vim.keymap.set("n", "<leader>gb", ":Gblame<CR>",  { desc = "Git blame" })
+-- Git: fugitive keymaps (use :Git, not :Gstatus)
+vim.keymap.set("n", "<leader>gs", ":Git<CR>",       { desc = "Git status" })
+vim.keymap.set("n", "<leader>gc", ":Git commit<CR>",{ desc = "Git commit" })
+vim.keymap.set("n", "<leader>gp", ":Git push<CR>",  { desc = "Git push" })
+vim.keymap.set("n", "<leader>gl", ":Git pull<CR>",  { desc = "Git pull" })
+vim.keymap.set("n", "<leader>gb", ":Git blame<CR>", { desc = "Git blame" })
 
 vim.api.nvim_create_autocmd("VimResized", {
 	callback = function() vim.cmd("wincmd =") end,
