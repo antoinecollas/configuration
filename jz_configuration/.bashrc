@@ -1,1 +1,2 @@
-[ -f ~/.shell_init ] && . ~/.shell_init
+# load .bash_profile
+source ~/.bash_profile
