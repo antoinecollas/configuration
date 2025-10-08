@@ -3,4 +3,7 @@ unset FPATH
 
 # load zsh
 export PATH="$HOME/.local/zsh-5.9/bin:$PATH"
-exec zsh
+# start zsh only for interactive shells
+if [[ $- == *i* ]]; then
+  exec zsh
+fi
