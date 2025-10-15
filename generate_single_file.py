@@ -5,7 +5,7 @@ REPO_ROOT = "./"
 # Output file
 OUTPUT_FILE = "flattened_repo.txt"
 # File extensions to include
-INCLUDE_EXTENSIONS = {".py", ".ipynb", ".js", ".ts", ".html", ".css", ".md", ".txt"}
+INCLUDE_EXTENSIONS = {".py", ".md"}
 
 # Excluded directories (e.g., virtualenvs, git, etc.)
 EXCLUDE_DIRS = {".git", "__pycache__", ".venv", "venv", "env", ".mypy_cache", ".pytest_cache"}
@@ -24,6 +24,7 @@ def walk_repo_and_flatten(repo_root):
             filepath = os.path.join(root, file)
             relpath = os.path.relpath(filepath, start=os.path.abspath(repo_root))
             if should_include_file(file):
+                print(f"Including file: {relpath}")
                 try:
                     with open(filepath, "r", encoding="utf-8") as f:
                         content = f.read()
