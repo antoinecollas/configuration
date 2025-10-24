@@ -5,7 +5,7 @@ REPO_ROOT = "./"
 # Output file
 OUTPUT_FILE = "flattened_repo.txt"
 # File extensions to include
-INCLUDE_EXTENSIONS = {".py", ".md"}
+INCLUDE_EXTENSIONS = {".py"}
 
 # Excluded directories (e.g., virtualenvs, git, etc.)
 EXCLUDE_DIRS = {".git", "__pycache__", ".venv", "venv", "env", ".mypy_cache", ".pytest_cache"}
