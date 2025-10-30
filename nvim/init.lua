@@ -129,6 +129,15 @@ require("lazy").setup({
 		{ "hrsh7th/cmp-cmdline" },
 		{ "L3MON4D3/LuaSnip" },
 		{ "saadparwaiz1/cmp_luasnip" },
+		-- === aerial.nvim ===
+		{
+			"stevearc/aerial.nvim",
+			opts = {
+				backends = { "lsp", "treesitter", "markdown" },
+				layout = { default_direction = "prefer_right", max_width = { 40, 0.3 } },
+				filter_kind = false, -- show all kinds (Class, Function, Method, etc.)
+			},
+		},	
 	},
 	install = { colorscheme = { "catppuccin" } },
 	checker = { enabled = true },
@@ -172,6 +181,9 @@ vim.keymap.set("n", "<leader>gc", ":Git commit<CR>",{ desc = "Git commit" })
 vim.keymap.set("n", "<leader>gp", ":Git push<CR>",  { desc = "Git push" })
 vim.keymap.set("n", "<leader>gl", ":Git pull<CR>",  { desc = "Git pull" })
 vim.keymap.set("n", "<leader>gb", ":Git blame<CR>", { desc = "Git blame" })
+
+-- aerial.nvim toggle
+vim.keymap.set("n", "<leader>o", "<cmd>AerialToggle!<CR>", { desc = "Outline" })
 
 vim.api.nvim_create_autocmd("VimResized", {
 	callback = function() vim.cmd("wincmd =") end,
