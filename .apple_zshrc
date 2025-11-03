@@ -81,3 +81,7 @@ open_notebook() {
         echo "Error: Failed to convert '$notebook' to PDF."
     fi
 }
+
+# Ruby paths
+export PATH="$(brew --prefix ruby)/bin:$PATH"
+export PATH="/opt/homebrew/lib/ruby/gems/3.4.0/bin:$PATH"
