@@ -1,238 +1,106 @@
--- Bootstrap lazy.nvim
+-- === Bootstrap lazy.nvim ===
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
-	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-	local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
-	if vim.v.shell_error ~= 0 then
-		vim.api.nvim_echo({
-			{ "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-			{ out, "WarningMsg" },
-			{ "\nPress any key to exit..." },
-		}, true, {})
-		vim.fn.getchar()
-		os.exit(1)
-	end
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath })
 end
 vim.opt.rtp:prepend(lazypath)
 
--- Leader keys
+-- === General Settings ===
 vim.g.mapleader = " "
-vim.g.maplocalleader = "\\"
-
--- Quickfix/Location list fallback
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "qf",
-  callback = function(ev)
-    local o = { buffer = ev.buf, silent = true }
-    vim.keymap.set("n", "<CR>", "<CR>", o)
-    vim.keymap.set("n", "q", "<cmd>cclose<CR>", o)
-  end,
-})
-
--- Setup plugins
-require("lazy").setup({
-	spec = {
-		-- === UI Icons (Required for Telescope/Trouble) ===
-		{ "nvim-tree/nvim-web-devicons", lazy = true },
-
-		-- === Theme ===
-		{
-			"catppuccin/nvim",
-			name = "catppuccin",
-			priority = 1000,
-			config = function()
-				require("catppuccin").setup({
-					flavour = "auto", 
-					background = { light = "latte", dark = "mocha" },
-					transparent_background = false,
-					integrations = {
-						cmp = true,
-						gitsigns = true,
-						nvimtree = true,
-						treesitter = true,
-						telescope = { enabled = true },
-						mini = { enabled = true },
-					},
-				})
-				vim.cmd.colorscheme "catppuccin-mocha"
-			end,
-		},
-
-		-- === Telescope (The Modern Grep) ===
-		{
-			"nvim-telescope/telescope.nvim",
-			tag = "0.1.8",
-			dependencies = { "nvim-lua/plenary.nvim" },
-			config = function()
-				local telescope = require("telescope")
-				telescope.setup({
-					defaults = {
-						layout_strategy = "horizontal",
-						layout_config = {
-							-- Fix: define prompt_position and preview_width inside the 'horizontal' table
-							horizontal = {
-								prompt_position = "top",
-								preview_width = 0.55,
-							},
-							width = 0.87,
-							height = 0.80,
-							preview_cutoff = 120,
-						},
-						sorting_strategy = "ascending",
-						file_ignore_patterns = { ".git/", "node_modules", "__pycache__" },
-						path_display = { "truncate" },
-					},
-					pickers = {
-						find_files = { theme = "dropdown", previewer = false },
-					},
-				})
-
-				-- Telescope Keymaps
-				local builtin = require("telescope.builtin")
-				vim.keymap.set("n", "<leader>sf", builtin.find_files, { desc = "Search Files" })
-				vim.keymap.set("n", "<leader>sg", builtin.live_grep, { desc = "Search Grep (Live)" })
-				vim.keymap.set("n", "<leader>sw", builtin.grep_string, { desc = "Search Word under cursor" })
-				vim.keymap.set("n", "<leader>sb", builtin.buffers, { desc = "Search Buffers" })
-				vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "Search Help" })
-			end,
-		},
-
-		-- === Trouble (Better Quickfix UI) ===
-		{
-			"folke/trouble.nvim",
-			opts = {},
-			cmd = "Trouble",
-			keys = {
-				{ "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", desc = "Diagnostics (Trouble)" },
-				{ "<leader>xq", "<cmd>Trouble qflist toggle<cr>", desc = "Quickfix List (Trouble)" },
-			},
-		},
-
-		-- === Treesitter ===
-		{
-			"nvim-treesitter/nvim-treesitter",
-			build = ":TSUpdate",
-			config = function()
-				require("nvim-treesitter.configs").setup({
-					ensure_installed = { "python", "lua", "bash", "json", "markdown", "yaml" },
-					highlight = { enable = true },
-					indent = { enable = true },
-				})
-			end,
-		},
-
-		-- === Copilot ===
-		{ "github/copilot.vim", lazy = false },
-
-		-- === Git ===
-		{ "tpope/vim-fugitive" },
-		{ "lewis6991/gitsigns.nvim", opts = {} },
-
-		-- === LSP ===
-		{ "neovim/nvim-lspconfig" },
-		{ "ray-x/lsp_signature.nvim", config = function()
-			require("lsp_signature").setup({ hint_prefix = "→ " })
-		end },
-
-		-- === Autocompletion ===
-		{ "hrsh7th/nvim-cmp" },
-		{ "hrsh7th/cmp-nvim-lsp" },
-		{ "hrsh7th/cmp-buffer" },
-		{ "hrsh7th/cmp-path" },
-		{ "hrsh7th/cmp-cmdline" },
-		{ "L3MON4D3/LuaSnip" },
-		{ "saadparwaiz1/cmp_luasnip" },
-
-		-- === aerial.nvim ===
-		{
-			"stevearc/aerial.nvim",
-			opts = {
-				backends = { "lsp", "treesitter", "markdown" },
-				layout = { default_direction = "prefer_right", max_width = { 40, 0.3 } },
-				filter_kind = false,
-			},
-		},
-	},
-	install = { colorscheme = { "catppuccin" } },
-	checker = { enabled = true },
-	rocks = { enabled = false },
-})
-
--- === Editor Options ===
 vim.opt.number = true
-vim.opt.encoding = "utf-8"
-vim.opt.scrolloff = 999
-vim.opt.splitbelow = true
-vim.opt.splitright = true
-vim.opt.hlsearch = true
-vim.opt.incsearch = true
+vim.opt.scrolloff = 8
+vim.opt.splitbelow, vim.opt.splitright = true, true -- New windows open bottom/right
+vim.opt.ignorecase, vim.opt.smartcase = true, true
 vim.opt.cursorline = true
-vim.opt.showmatch = true
-vim.opt.grepprg = "rg --smart-case --vimgrep"
 vim.opt.signcolumn = "yes"
+vim.opt.termguicolors = true
 
--- === Keybindings ===
-local map = vim.keymap.set
-local opts = { noremap = true, silent = true }
-map("v", "p", "pgvy", opts)
-map("v", "P", "Pgvy", opts)
-vim.cmd([[vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>]])
-map("n", "<leader>/", ":noh<CR>", opts)
-map("c", "<C-P>", "<Up>", opts)
-map("c", "<C-N>", "<Down>", opts)
-map("n", "<C-L>", "<C-W><C-J>", opts)
-map("n", "<C-K>", "<C-W><C-K>", opts)
-map("n", "<C-M>", "<C-W><C-L>", opts)
-map("n", "<C-J>", "<C-W><C-H>", opts)
-map("n", "<F7>", ":cp<CR>", opts)
-map("n", "<F8>", ":cn<CR>", opts)
-vim.api.nvim_create_user_command('E', 'Explore', {})
-vim.cmd([[iabbrev ipdb import ipdb; ipdb.set_trace()]])
+-- === Keymaps ===
+vim.keymap.set("n", "<leader>/", ":noh<CR>", { silent = true }) -- Clear search highlights
+vim.keymap.set("n", "<leader>o", "<cmd>AerialToggle!<CR>") -- Outline
 
--- Git: fugitive keymaps
-vim.keymap.set("n", "<leader>gs", ":Git<CR>",       { desc = "Git status" })
-vim.keymap.set("n", "<leader>gc", ":Git commit<CR>",{ desc = "Git commit" })
-vim.keymap.set("n", "<leader>gp", ":Git push<CR>",  { desc = "Git push" })
-vim.keymap.set("n", "<leader>gl", ":Git pull<CR>",  { desc = "Git pull" })
-vim.keymap.set("n", "<leader>gb", ":Git blame<CR>", { desc = "Git blame" })
+-- Standard Window Navigation (Ctrl + h/j/k/l)
+vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Window Left" })
+vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Window Down" })
+vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Window Up" })
+vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Window Right" })
 
--- aerial.nvim toggle
-vim.keymap.set("n", "<leader>o", "<cmd>AerialToggle!<CR>", { desc = "Outline" })
+-- === Plugins ===
+require("lazy").setup({
+  -- UI / Theme
+  { "nvim-tree/nvim-web-devicons", lazy = true },
+  {
+    "catppuccin/nvim", name = "catppuccin", priority = 1000,
+    opts = { flavour = "mocha", integrations = { cmp = true, gitsigns = true, treesitter = true } },
+    init = function() vim.cmd.colorscheme "catppuccin" end
+  },
 
-vim.api.nvim_create_autocmd("VimResized", {
-	callback = function() vim.cmd("wincmd =") end,
+  -- Search (Telescope)
+  {
+    "nvim-telescope/telescope.nvim", dependencies = { "nvim-lua/plenary.nvim" },
+    keys = {
+      { "<leader>sf", "<cmd>Telescope find_files<cr>" },
+      { "<leader>sg", "<cmd>Telescope live_grep<cr>" },
+      { "<leader>sw", "<cmd>Telescope grep_string<cr>" },
+      { "<leader>sb", "<cmd>Telescope buffers<cr>" },
+    },
+    opts = {
+      defaults = {
+        file_ignore_patterns = { ".git/", "node_modules", "__pycache__" },
+        sorting_strategy = "ascending", -- List starts at top
+        layout_config = {
+          horizontal = { prompt_position = "top" }, -- Search bar at top
+        },
+        mappings = {
+          i = { -- Allow using Ctrl+j/k to move in search results
+            ["<C-j>"] = "move_selection_next",
+            ["<C-k>"] = "move_selection_previous",
+          }
+        }
+      }
+    }
+  },
+
+  -- Git
+  { "lewis6991/gitsigns.nvim", opts = {} },
+  { "tpope/vim-fugitive", cmd = "Git", keys = { { "<leader>gs", "<cmd>Git<cr>" } } },
+
+  -- Highlighting
+  { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate", main = "nvim-treesitter.configs",
+    opts = { ensure_installed = { "python", "lua", "bash", "markdown" }, highlight = { enable = true } }
+  },
+
+  -- Tools
+  { "folke/trouble.nvim", cmd = "Trouble", opts = {} },
+  { "stevearc/aerial.nvim", opts = {} },
+  { "github/copilot.vim" },
+
+  -- LSP & Completion
+  {
+    "neovim/nvim-lspconfig",
+    dependencies = { "hrsh7th/nvim-cmp", "hrsh7th/cmp-nvim-lsp", "L3MON4D3/LuaSnip" },
+    config = function()
+      local lsp = require("lspconfig")
+      local on_attach = function(_, bufnr)
+        local opts = { buffer = bufnr }
+        vim.keymap.set("n", "<leader>g", vim.lsp.buf.definition, opts)
+        vim.keymap.set("n", "<leader>r", vim.lsp.buf.references, opts)
+        vim.keymap.set("n", "<leader>d", vim.lsp.buf.hover, opts)
+      end
+      
+      -- Setup Python (Jedi)
+      lsp.jedi_language_server.setup({ on_attach = on_attach })
+
+      -- Completion (CMP)
+      local cmp = require("cmp")
+      cmp.setup({
+        snippet = { expand = function(args) require("luasnip").lsp_expand(args.body) end },
+        mapping = cmp.mapping.preset.insert({ ["<CR>"] = cmp.mapping.confirm({ select = true }) }),
+        sources = { { name = "nvim_lsp" }, { name = "buffer" } },
+      })
+    end
+  },
 })
 
--- === LSP: Python via Jedi ===
-require("lspconfig").jedi_language_server.setup({
-	on_attach = function(client, bufnr)
-		client.server_capabilities.signatureHelpProvider = false
-		local map = function(keys, func, desc)
-			vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
-		end
-		map("<leader>g", vim.lsp.buf.definition, "Go to Definition")
-		map("<leader>r", vim.lsp.buf.references, "Find References")
-		map("<leader>d", vim.lsp.buf.hover, "Show Hover")
-		map("<leader>i", vim.lsp.buf.implementation, "Go to Implementation")
-	end,
-})
-
--- === nvim-cmp setup ===
-local cmp = require("cmp")
-cmp.setup({
-	snippet = {
-		expand = function(args)
-			require("luasnip").lsp_expand(args.body)
-		end,
-	},
-	mapping = cmp.mapping.preset.insert({
-		["<C-Space>"] = cmp.mapping.complete(),
-		["<CR>"] = cmp.mapping.confirm({ select = true }),
-	}),
-	sources = cmp.config.sources({
-		{ name = "nvim_lsp" },
-		{ name = "luasnip" },
-	}, {
-		{ name = "buffer" },
-	}),
-})
+-- Auto-close Quickfix with 'q'
+vim.api.nvim_create_autocmd("FileType", { pattern = "qf", command = "nnoremap <buffer> q <cmd>cclose<CR>" })
