@@ -32,6 +32,9 @@ vim.api.nvim_create_autocmd("FileType", {
 -- Setup plugins
 require("lazy").setup({
 	spec = {
+		-- === UI Icons (Required for Telescope/Trouble) ===
+		{ "nvim-tree/nvim-web-devicons", lazy = true },
+
 		-- === Theme ===
 		{
 			"catppuccin/nvim",
@@ -44,19 +47,19 @@ require("lazy").setup({
 						light = "latte",
 						dark = "mocha",
 					},
-					transparent_background = false, -- disables setting the background color.
-					show_end_of_buffer = false, -- shows the '~' characters after the end of buffers
-					term_colors = false, -- sets terminal colors (e.g. `g:terminal_color_0`)
+					transparent_background = false,
+					show_end_of_buffer = false,
+					term_colors = false,
 					dim_inactive = {
-						enabled = false, -- dims the background color of inactive window
+						enabled = false,
 						shade = "dark",
-						percentage = 0.15, -- percentage of the shade to apply to the inactive window
+						percentage = 0.15,
 					},
-					no_italic = false, -- Force no italic
-					no_bold = false, -- Force no bold
-					no_underline = false, -- Force no underline
-					styles = { -- Handles the styles of general hi groups (see `:h highlight-args`):
-						comments = { "italic" }, -- Change the style of comments
+					no_italic = false,
+					no_bold = false,
+					no_underline = false,
+					styles = {
+						comments = { "italic" },
 						conditionals = { "italic" },
 						loops = {},
 						functions = {},
@@ -68,7 +71,6 @@ require("lazy").setup({
 						properties = {},
 						types = {},
 						operators = {},
-						-- miscs = {}, -- Uncomment to turn off hard-coded styles
 					},
 					color_overrides = {},
 					custom_highlights = {},
@@ -79,17 +81,67 @@ require("lazy").setup({
 						nvimtree = true,
 						treesitter = true,
 						notify = false,
+						telescope = { enabled = true }, -- Enable Telescope highlights
 						mini = {
 							enabled = true,
 							indentscope_color = "",
 						},
-						-- For more plugins integrations please scroll down (https://github.com/catppuccin/nvim#integrations)
+					},
+				})
+				vim.cmd.colorscheme "catppuccin-mocha"
+			end,
+		},
+
+		-- === Telescope (The Modern Grep) ===
+		{
+			"nvim-telescope/telescope.nvim",
+			tag = "0.1.8",
+			dependencies = { "nvim-lua/plenary.nvim" },
+			config = function()
+				local telescope = require("telescope")
+				telescope.setup({
+					defaults = {
+						-- Layout config to make it look nice and modern
+						layout_strategy = "horizontal",
+						layout_config = {
+							prompt_position = "top",
+							preview_width = 0.55,
+						},
+						sorting_strategy = "ascending",
+						file_ignore_patterns = { ".git/", "node_modules", "__pycache__" },
+					},
+					pickers = {
+						find_files = { theme = "dropdown", previewer = false },
 					},
 				})
 
-				-- setup must be called before loading
-				vim.cmd.colorscheme "catppuccin-mocha"
+				-- Telescope Keymaps
+				local builtin = require("telescope.builtin")
+				vim.keymap.set("n", "<leader>sf", builtin.find_files, { desc = "Search Files" })
+				vim.keymap.set("n", "<leader>sg", builtin.live_grep, { desc = "Search Grep (Live)" })
+				vim.keymap.set("n", "<leader>sw", builtin.grep_string, { desc = "Search Word under cursor" })
+				vim.keymap.set("n", "<leader>sb", builtin.buffers, { desc = "Search Buffers" })
+				vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "Search Help" })
 			end,
+		},
+
+		-- === Trouble (Better Quickfix UI) ===
+		{
+			"folke/trouble.nvim",
+			opts = {}, -- uses default config
+			cmd = "Trouble",
+			keys = {
+				{
+					"<leader>xx",
+					"<cmd>Trouble diagnostics toggle<cr>",
+					desc = "Diagnostics (Trouble)",
+				},
+				{
+					"<leader>xq",
+					"<cmd>Trouble qflist toggle<cr>",
+					desc = "Quickfix List (Trouble)",
+				},
+			},
 		},
 
 		-- === Treesitter ===
@@ -108,7 +160,7 @@ require("lazy").setup({
 		-- === Copilot ===
 		{
 			"github/copilot.vim",
-			lazy = false, -- must be eagerly loaded
+			lazy = false,
 		},
 
 		-- === Git ===
@@ -129,15 +181,16 @@ require("lazy").setup({
 		{ "hrsh7th/cmp-cmdline" },
 		{ "L3MON4D3/LuaSnip" },
 		{ "saadparwaiz1/cmp_luasnip" },
+
 		-- === aerial.nvim ===
 		{
 			"stevearc/aerial.nvim",
 			opts = {
 				backends = { "lsp", "treesitter", "markdown" },
 				layout = { default_direction = "prefer_right", max_width = { 40, 0.3 } },
-				filter_kind = false, -- show all kinds (Class, Function, Method, etc.)
+				filter_kind = false,
 			},
-		},	
+		},
 	},
 	install = { colorscheme = { "catppuccin" } },
 	checker = { enabled = true },
@@ -175,7 +228,7 @@ map("n", "<F8>", ":cn<CR>", opts)
 vim.api.nvim_create_user_command('E', 'Explore', {})
 vim.cmd([[iabbrev ipdb import ipdb; ipdb.set_trace()]])
 
--- Git: fugitive keymaps (use :Git, not :Gstatus)
+-- Git: fugitive keymaps
 vim.keymap.set("n", "<leader>gs", ":Git<CR>",       { desc = "Git status" })
 vim.keymap.set("n", "<leader>gc", ":Git commit<CR>",{ desc = "Git commit" })
 vim.keymap.set("n", "<leader>gp", ":Git push<CR>",  { desc = "Git push" })
