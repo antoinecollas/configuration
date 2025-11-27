@@ -19,7 +19,7 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
--- Quickfix/Location list: Enter opens the selected entry; q closes the list
+-- Quickfix/Location list fallback
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "qf",
   callback = function(ev)
@@ -42,50 +42,16 @@ require("lazy").setup({
 			priority = 1000,
 			config = function()
 				require("catppuccin").setup({
-					flavour = "auto", -- latte, frappe, macchiato, mocha
-					background = { -- :h background
-						light = "latte",
-						dark = "mocha",
-					},
+					flavour = "auto", 
+					background = { light = "latte", dark = "mocha" },
 					transparent_background = false,
-					show_end_of_buffer = false,
-					term_colors = false,
-					dim_inactive = {
-						enabled = false,
-						shade = "dark",
-						percentage = 0.15,
-					},
-					no_italic = false,
-					no_bold = false,
-					no_underline = false,
-					styles = {
-						comments = { "italic" },
-						conditionals = { "italic" },
-						loops = {},
-						functions = {},
-						keywords = {},
-						strings = {},
-						variables = {},
-						numbers = {},
-						booleans = {},
-						properties = {},
-						types = {},
-						operators = {},
-					},
-					color_overrides = {},
-					custom_highlights = {},
-					default_integrations = true,
 					integrations = {
 						cmp = true,
 						gitsigns = true,
 						nvimtree = true,
 						treesitter = true,
-						notify = false,
-						telescope = { enabled = true }, -- Enable Telescope highlights
-						mini = {
-							enabled = true,
-							indentscope_color = "",
-						},
+						telescope = { enabled = true },
+						mini = { enabled = true },
 					},
 				})
 				vim.cmd.colorscheme "catppuccin-mocha"
@@ -101,14 +67,20 @@ require("lazy").setup({
 				local telescope = require("telescope")
 				telescope.setup({
 					defaults = {
-						-- Layout config to make it look nice and modern
 						layout_strategy = "horizontal",
 						layout_config = {
-							prompt_position = "top",
-							preview_width = 0.55,
+							-- Fix: define prompt_position and preview_width inside the 'horizontal' table
+							horizontal = {
+								prompt_position = "top",
+								preview_width = 0.55,
+							},
+							width = 0.87,
+							height = 0.80,
+							preview_cutoff = 120,
 						},
 						sorting_strategy = "ascending",
 						file_ignore_patterns = { ".git/", "node_modules", "__pycache__" },
+						path_display = { "truncate" },
 					},
 					pickers = {
 						find_files = { theme = "dropdown", previewer = false },
@@ -128,19 +100,11 @@ require("lazy").setup({
 		-- === Trouble (Better Quickfix UI) ===
 		{
 			"folke/trouble.nvim",
-			opts = {}, -- uses default config
+			opts = {},
 			cmd = "Trouble",
 			keys = {
-				{
-					"<leader>xx",
-					"<cmd>Trouble diagnostics toggle<cr>",
-					desc = "Diagnostics (Trouble)",
-				},
-				{
-					"<leader>xq",
-					"<cmd>Trouble qflist toggle<cr>",
-					desc = "Quickfix List (Trouble)",
-				},
+				{ "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", desc = "Diagnostics (Trouble)" },
+				{ "<leader>xq", "<cmd>Trouble qflist toggle<cr>", desc = "Quickfix List (Trouble)" },
 			},
 		},
 
@@ -158,10 +122,7 @@ require("lazy").setup({
 		},
 
 		-- === Copilot ===
-		{
-			"github/copilot.vim",
-			lazy = false,
-		},
+		{ "github/copilot.vim", lazy = false },
 
 		-- === Git ===
 		{ "tpope/vim-fugitive" },
@@ -242,12 +203,10 @@ vim.api.nvim_create_autocmd("VimResized", {
 	callback = function() vim.cmd("wincmd =") end,
 })
 
--- === LSP: Python via Jedi (runtime-aware resolution) ===
+-- === LSP: Python via Jedi ===
 require("lspconfig").jedi_language_server.setup({
 	on_attach = function(client, bufnr)
-		-- Disable lsp_signature for Jedi (known issue)
 		client.server_capabilities.signatureHelpProvider = false
-
 		local map = function(keys, func, desc)
 			vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
 		end
@@ -274,6 +233,6 @@ cmp.setup({
 		{ name = "nvim_lsp" },
 		{ name = "luasnip" },
 	}, {
-			{ name = "buffer" },
-		}),
+		{ name = "buffer" },
+	}),
 })
