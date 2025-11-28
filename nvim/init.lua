@@ -20,6 +20,9 @@ vim.keymap.set("n", "<leader>/", ":noh<CR>", { silent = true }) -- Clear search 
 vim.keymap.set("n", "<leader>o", "<cmd>AerialToggle!<CR>") -- Outline
 vim.api.nvim_create_user_command("E", "Explore", {})
 
+-- Python Debugger Abbreviation (Type 'ipdb' + Space/Enter)
+vim.cmd("iabbrev ipdb import ipdb; ipdb.set_trace()")
+
 -- Standard Window Navigation (Ctrl + h/j/k/l)
 vim.keymap.set("n", "<C-j>", "<C-w>h", { desc = "Window Left" })
 vim.keymap.set("n", "<C-l>", "<C-w>j", { desc = "Window Down" })
