@@ -68,6 +68,15 @@ require("lazy").setup({
   -- Git
   { "lewis6991/gitsigns.nvim", opts = {} },
   { "tpope/vim-fugitive", cmd = "Git", keys = { { "<leader>gs", "<cmd>Git<cr>" } } },
+  {
+    "sindrets/diffview.nvim",
+    opts = {},
+    cmd = { "DiffviewOpen", "DiffviewFileHistory" },
+    keys = {
+      { "<leader>dv", "<cmd>DiffviewOpen<cr>", desc = "Diff View" },
+      { "<leader>dh", "<cmd>DiffviewFileHistory %<cr>", desc = "File History" },
+    },
+  },
 
   -- Highlighting
   { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate", main = "nvim-treesitter.configs",
