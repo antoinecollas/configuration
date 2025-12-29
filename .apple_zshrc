@@ -85,3 +85,6 @@ open_notebook() {
 # Ruby paths
 export PATH="$(brew --prefix ruby)/bin:$PATH"
 export PATH="/opt/homebrew/lib/ruby/gems/3.4.0/bin:$PATH"
+
+# Scaleway CLI autocomplete initialization.
+eval "$(scw autocomplete script shell=zsh)"
