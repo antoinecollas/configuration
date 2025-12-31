@@ -88,3 +88,10 @@ export PATH="/opt/homebrew/lib/ruby/gems/3.4.0/bin:$PATH"
 
 # Scaleway CLI autocomplete initialization.
 eval "$(scw autocomplete script shell=zsh)"
+
+# Starship prompt
+export STARSHIP_CONFIG="$HOME/configuration/starship.toml"
+eval "$(starship init zsh)"
+
+# Load zsh-autosuggestions
+source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh

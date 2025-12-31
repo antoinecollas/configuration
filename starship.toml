@@ -1,0 +1,11 @@
+# Minimal config: keep defaults, disable modules you don't want.
+
+[conda]
+disabled = true
+
+[aws]
+disabled = true
+
+[python]
+format = "[\\($virtualenv\\)]($style) "
+style = "bold yellow"
