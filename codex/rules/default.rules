@@ -1,0 +1,25 @@
+# ~/.codex/rules/default.rules
+# Starlark (Python-like). Rules are prefix matches.
+
+# --- Python workflow ---
+prefix_rule(pattern=["uv"], decision="allow")
+prefix_rule(pattern=["ruff"], decision="allow")
+prefix_rule(pattern=["pre-commit"], decision="allow")
+prefix_rule(pattern=["pytest"], decision="allow")
+prefix_rule(pattern=["python", "-m", "pytest"], decision="allow")
+
+# --- Git workflow (allow everything you listed) ---
+prefix_rule(pattern=["git", "status"], decision="allow")
+prefix_rule(pattern=["git", "diff"], decision="allow")
+prefix_rule(pattern=["git", "add"], decision="allow")
+prefix_rule(pattern=["git", "restore"], decision="allow")
+prefix_rule(pattern=["git", "checkout"], decision="allow")
+prefix_rule(pattern=["git", "switch"], decision="allow")
+prefix_rule(pattern=["git", "commit"], decision="allow")
+prefix_rule(pattern=["git", "pull"], decision="allow")
+prefix_rule(pattern=["git", "fetch"], decision="allow")
+prefix_rule(pattern=["git", "update-ref"], decision="allow")
+prefix_rule(pattern=["git", "stash"], decision="allow")
+
+# --- The one thing that must always ask ---
+prefix_rule(pattern=["git", "push"], decision="prompt")
