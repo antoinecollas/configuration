@@ -34,7 +34,7 @@ model_supports_reasoning_summaries = false
 # - on-failure: auto-run in sandbox; prompt only on failure for escalation
 # - on-request: model decides when to ask (default)
 # - never: never prompt (risky)
-approval_policy = "on-request"
+approval_policy = "untrusted"
 
 # Filesystem/network sandbox policy for tool calls:
 # - read-only (default)
