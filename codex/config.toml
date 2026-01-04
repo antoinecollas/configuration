@@ -1,0 +1,90 @@
+# ~/.codex/config.toml
+
+# Primary model used by Codex. Default: "gpt-5.2-codex" on all platforms.
+model = "gpt-5.2-codex"
+
+# Model used by the /review feature (code reviews). Default: "gpt-5.2-codex".
+review_model = "gpt-5.2-codex"
+
+# Provider id selected from [model_providers]. Default: "openai".
+model_provider = "openai"
+
+################################################################################
+# Reasoning & Verbosity (Responses API capable models)
+################################################################################
+
+# Reasoning effort: minimal | low | medium | high | xhigh (default: medium; xhigh on gpt-5.2-codex and gpt-5.2)
+model_reasoning_effort = "medium"
+
+# Reasoning summary: auto | concise | detailed | none (default: auto)
+model_reasoning_summary = "auto"
+
+# Text verbosity for GPT-5 family (Responses API): low | medium | high (default: medium)
+model_verbosity = "medium"
+
+# Force-enable reasoning summaries for current model (default: false)
+model_supports_reasoning_summaries = false
+
+################################################################################
+# Approval & Sandbox
+################################################################################
+
+# When to ask for command approval:
+# - untrusted: only known-safe read-only commands auto-run; others prompt
+# - on-failure: auto-run in sandbox; prompt only on failure for escalation
+# - on-request: model decides when to ask (default)
+# - never: never prompt (risky)
+approval_policy = "on-request"
+
+# Filesystem/network sandbox policy for tool calls:
+# - read-only (default)
+# - workspace-write
+# - danger-full-access (no sandbox; extremely risky)
+sandbox_mode = "workspace-write"
+
+# Extra settings used only when sandbox_mode = "workspace-write".
+[sandbox_workspace_write]
+# Additional writable roots beyond the workspace (cwd). Default: []
+writable_roots = []
+# Allow outbound network access inside the sandbox. Default: false
+network_access = true
+# Exclude $TMPDIR from writable roots. Default: false
+exclude_tmpdir_env_var = false
+# Exclude /tmp from writable roots. Default: false
+exclude_slash_tmp = false
+
+################################################################################
+# UI, Notifications, and Misc
+################################################################################
+
+[tui]
+# Desktop notifications from the TUI: boolean or filtered list. Default: true
+# Examples: false | ["agent-turn-complete", "approval-requested"]
+notifications = ["agent-turn-complete", "approval-requested"]
+
+################################################################################
+# Tools (legacy toggles kept for compatibility)
+################################################################################
+
+[tools]
+# Enable web search tool (alias: web_search_request). Default: false
+web_search = true
+
+# Enable the view_image tool so the agent can attach local images. Default: true
+view_image = true
+
+# (Alias accepted) You can also write:
+# web_search_request = false
+
+################################################################################
+# Centralized Feature Flags (preferred)
+################################################################################
+
+[features]
+# Leave this table empty to accept defaults. Set explicit booleans to opt in/out.
+unified_exec = true
+apply_patch_freeform = true
+view_image_tool = true
+web_search_request = true
+enable_experimental_windows_sandbox = true
+skills = true
