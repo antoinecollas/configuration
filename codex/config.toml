@@ -60,7 +60,7 @@ exclude_slash_tmp = false
 [tui]
 # Desktop notifications from the TUI: boolean or filtered list. Default: true
 # Examples: false | ["agent-turn-complete", "approval-requested"]
-notifications = ["agent-turn-complete", "approval-requested"]
+notifications = true
 
 ################################################################################
 # Centralized Feature Flags (preferred)
