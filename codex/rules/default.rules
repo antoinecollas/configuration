@@ -18,6 +18,7 @@ prefix_rule(pattern=["git", "switch"], decision="allow")
 prefix_rule(pattern=["git", "commit"], decision="allow")
 prefix_rule(pattern=["git", "pull"], decision="allow")
 prefix_rule(pattern=["git", "fetch"], decision="allow")
+prefix_rule(pattern=["git", "update-ref"], decision="allow")
 
 # --- The one thing that must always ask ---
 prefix_rule(pattern=["git", "push"], decision="prompt")
