@@ -63,20 +63,6 @@ exclude_slash_tmp = false
 notifications = ["agent-turn-complete", "approval-requested"]
 
 ################################################################################
-# Tools (legacy toggles kept for compatibility)
-################################################################################
-
-[tools]
-# Enable web search tool (alias: web_search_request). Default: false
-web_search = true
-
-# Enable the view_image tool so the agent can attach local images. Default: true
-view_image = true
-
-# (Alias accepted) You can also write:
-# web_search_request = false
-
-################################################################################
 # Centralized Feature Flags (preferred)
 ################################################################################
 
@@ -86,5 +72,5 @@ unified_exec = true
 apply_patch_freeform = true
 view_image_tool = true
 web_search_request = true
-enable_experimental_windows_sandbox = true
+experimental_windows_sandbox = true
 skills = true
