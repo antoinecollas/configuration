@@ -14,7 +14,7 @@ model_provider = "openai"
 ################################################################################
 
 # Reasoning effort: minimal | low | medium | high | xhigh (default: medium; xhigh on gpt-5.2-codex and gpt-5.2)
-model_reasoning_effort = "medium"
+model_reasoning_effort = "xhigh"
 
 # Reasoning summary: auto | concise | detailed | none (default: auto)
 model_reasoning_summary = "auto"
@@ -74,3 +74,8 @@ view_image_tool = true
 web_search_request = true
 experimental_windows_sandbox = true
 skills = true
+shell_snapshot = true
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["-y", "@playwright/mcp@latest"]
