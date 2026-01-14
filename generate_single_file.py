@@ -27,6 +27,7 @@ EXCLUDE_PATTERNS = {
     "poetry.lock", "composer.lock", "cargo.lock",
     "*.svg", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.ico",
     "data/*", "tests/*", "*test*", # Exclude tests if you want to save space
+    "node_modules/*",
 }
 # ==========================================
 
