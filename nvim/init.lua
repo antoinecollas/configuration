@@ -15,6 +15,23 @@ vim.opt.cursorline = true
 vim.opt.signcolumn = "yes"
 vim.opt.termguicolors = true
 
+-- === Indentation Settings ===
+-- Default: 4 spaces (Standard for Python, Lua, Rust)
+vim.opt.tabstop = 4
+vim.opt.softtabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.expandtab = true
+
+-- Override: 2 spaces for Web (TS, JS, HTML, CSS, JSON)
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "javascript", "typescript", "typescriptreact", "javascriptreact", "html", "css", "json", "yaml" },
+  callback = function()
+    vim.opt_local.tabstop = 2
+    vim.opt_local.shiftwidth = 2
+    vim.opt_local.softtabstop = 2
+  end,
+})
+
 -- === Keymaps ===
 vim.keymap.set("n", "<leader>/", ":noh<CR>", { silent = true }) -- Clear search highlights
 vim.keymap.set("n", "<leader>o", "<cmd>AerialToggle!<CR>") -- Outline
@@ -80,7 +97,10 @@ require("lazy").setup({
 
   -- Highlighting
   { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate", main = "nvim-treesitter.configs",
-    opts = { ensure_installed = { "python", "lua", "bash", "markdown" }, highlight = { enable = true } }
+    opts = { 
+        ensure_installed = { "python", "lua", "bash", "markdown", "typescript", "javascript", "tsx" }, 
+        highlight = { enable = true } 
+    }
   },
 
   -- Tools
@@ -91,9 +111,27 @@ require("lazy").setup({
   -- LSP & Completion
   {
     "neovim/nvim-lspconfig",
-    dependencies = { "hrsh7th/nvim-cmp", "hrsh7th/cmp-nvim-lsp", "L3MON4D3/LuaSnip" },
+    dependencies = { 
+        "williamboman/mason.nvim",
+        "williamboman/mason-lspconfig.nvim",
+        "hrsh7th/nvim-cmp", 
+        "hrsh7th/cmp-nvim-lsp", 
+        "L3MON4D3/LuaSnip" 
+    },
     config = function()
-      local lsp = require("lspconfig")
+      require("mason").setup()
+      
+      -- Define the servers you want
+      -- "ts_ls" is the standard TypeScript server (formerly 'tsserver')
+      local servers = { "jedi_language_server", "ts_ls" }
+
+      -- Ensure they are installed via Mason
+      require("mason-lspconfig").setup({
+        ensure_installed = servers,
+      })
+
+      local lspconfig = require("lspconfig")
+      local capabilities = require("cmp_nvim_lsp").default_capabilities()
       local on_attach = function(_, bufnr)
         local opts = { buffer = bufnr }
         vim.keymap.set("n", "<leader>g", vim.lsp.buf.definition, opts)
@@ -101,8 +139,13 @@ require("lazy").setup({
         vim.keymap.set("n", "<leader>d", vim.lsp.buf.hover, opts)
       end
       
-      -- Setup Python (Jedi)
-      lsp.jedi_language_server.setup({ on_attach = on_attach })
+      -- Manually setup each server
+      for _, server in ipairs(servers) do
+        lspconfig[server].setup({
+          on_attach = on_attach,
+          capabilities = capabilities,
+        })
+      end
 
       -- Completion (CMP)
       local cmp = require("cmp")
