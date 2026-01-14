@@ -104,7 +104,14 @@ require("lazy").setup({
   },
 
   -- Tools
-  { "folke/trouble.nvim", cmd = "Trouble", opts = {} },
+  { 
+    "folke/trouble.nvim", 
+    cmd = "Trouble", 
+    opts = {},
+    keys = {
+      { "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", desc = "Diagnostics (Trouble)" },
+    }
+  },
   { "stevearc/aerial.nvim", opts = {} },
   { "github/copilot.vim" },
 
@@ -132,19 +139,41 @@ require("lazy").setup({
 
       local lspconfig = require("lspconfig")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+      -- Global diagnostic config (makes errors look nicer)
+      vim.diagnostic.config({
+        virtual_text = false, -- Turn off inline text if it's too cluttery
+        float = {
+            border = "rounded",
+            source = "always",
+        },
+        signs = true,
+      })
+
       local on_attach = function(_, bufnr)
         local opts = { buffer = bufnr }
         vim.keymap.set("n", "<leader>g", vim.lsp.buf.definition, opts)
         vim.keymap.set("n", "<leader>r", vim.lsp.buf.references, opts)
         vim.keymap.set("n", "<leader>d", vim.lsp.buf.hover, opts)
+        vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, opts)
+        vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
+        vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
       end
       
-      -- Manually setup each server
+      -- Setup servers
       for _, server in ipairs(servers) do
-        lspconfig[server].setup({
+        local opts = {
           on_attach = on_attach,
           capabilities = capabilities,
-        })
+        }
+
+        -- Specific fix for TypeScript "False Positives"
+        if server == "ts_ls" then
+            opts.root_dir = lspconfig.util.root_pattern("tsconfig.json", "package.json", ".git")
+            opts.single_file_support = false -- Prevent it from running in single-file mode (which causes errors)
+        end
+
+        lspconfig[server].setup(opts)
       end
 
       -- Completion (CMP)
