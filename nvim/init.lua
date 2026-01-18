@@ -22,7 +22,7 @@ vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
 
--- Override: 2 spaces for Web (TS, JS, HTML, CSS, JSON)
+-- Override: 2 spaces for Web (TS, JS, HTML, CSS, JSON, YAML)
 vim.api.nvim_create_autocmd("FileType", {
   pattern = { "javascript", "typescript", "typescriptreact", "javascriptreact", "html", "css", "json", "yaml" },
   callback = function()
@@ -98,9 +98,25 @@ require("lazy").setup({
   -- Highlighting
   { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate", main = "nvim-treesitter.configs",
     opts = { 
-        ensure_installed = { "python", "lua", "bash", "markdown", "typescript", "javascript", "tsx" }, 
+        ensure_installed = { "python", "lua", "bash", "markdown", "markdown_inline", "typescript", "javascript", "tsx" }, 
         highlight = { enable = true } 
     }
+  },
+
+  -- Markdown Rendering
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
+    ft = { "markdown" },
+    opts = {
+      heading = {
+        icons = { "󰲡 ", "󰲣 ", "󰲥 ", "󰲧 ", "󰲩 ", "󰲫 " },
+      },
+      code = {
+        width = "block",
+        right_pad = 2,
+      },
+    },
   },
 
   -- Tools
@@ -128,9 +144,7 @@ require("lazy").setup({
     config = function()
       require("mason").setup()
       
-      -- Define the servers you want
-      -- "ts_ls" is the standard TypeScript server (formerly 'tsserver')
-      local servers = { "jedi_language_server", "ts_ls" }
+      local servers = { "jedi_language_server", "ts_ls", "marksman" }
 
       -- Ensure they are installed via Mason
       require("mason-lspconfig").setup({
@@ -187,5 +201,16 @@ require("lazy").setup({
   },
 })
 
+-- === Autocmds ===
+
 -- Auto-close Quickfix with 'q'
 vim.api.nvim_create_autocmd("FileType", { pattern = "qf", command = "nnoremap <buffer> q <cmd>cclose<CR>" })
+
+-- Required settings for Markdown rendering
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
+  callback = function()
+    vim.opt_local.conceallevel = 2 -- Hide markdown symbols like ** or _
+    vim.opt_local.wrap = true      -- Wrap long lines in markdown
+  end,
+})
