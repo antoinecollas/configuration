@@ -9,6 +9,9 @@ review_model = "gpt-5.2-codex"
 # Provider id selected from [model_providers]. Default: "openai".
 model_provider = "openai"
 
+[model_providers.openai]
+stream_idle_timeout_ms = 3600000  # 1 hour
+
 ################################################################################
 # Reasoning & Verbosity (Responses API capable models)
 ################################################################################
@@ -17,13 +20,19 @@ model_provider = "openai"
 model_reasoning_effort = "xhigh"
 
 # Reasoning summary: auto | concise | detailed | none (default: auto)
-model_reasoning_summary = "auto"
+model_reasoning_summary = "detailed"
 
 # Text verbosity for GPT-5 family (Responses API): low | medium | high (default: medium)
-model_verbosity = "medium"
+model_verbosity = "high"
 
 # Force-enable reasoning summaries for current model (default: false)
 model_supports_reasoning_summaries = false
+
+# Ensure you’re not hiding the internal “reasoning events” UI
+hide_agent_reasoning = false
+
+# show raw reasoning events if available
+show_raw_agent_reasoning = true
 
 ################################################################################
 # Approval & Sandbox
