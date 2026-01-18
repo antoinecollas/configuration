@@ -319,7 +319,7 @@ tui2 = true
 
 [model_providers]
 
---- Example: override OpenAI with explicit base URL or headers ---
+# --- Example: override OpenAI with explicit base URL or headers ---
 [model_providers.openai]
 name = "OpenAI"
 base_url = "https://api.openai.com/v1"         # default if unset
