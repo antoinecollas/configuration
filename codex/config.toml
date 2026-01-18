@@ -45,7 +45,7 @@ model_reasoning_summary = "detailed"
 model_verbosity = "high"
 
 # Force-enable reasoning summaries for current model (default: false)
-model_supports_reasoning_summaries = false
+# model_supports_reasoning_summaries = false
 
 ################################################################################
 # Instruction Overrides
@@ -141,7 +141,7 @@ file_opener = "vscode"
 hide_agent_reasoning = false
 
 # Show raw reasoning content when available. Default: false
-show_raw_agent_reasoning = true
+show_raw_agent_reasoning = false
 
 # Disable burst-paste detection in the TUI. Default: false
 disable_paste_burst = false
