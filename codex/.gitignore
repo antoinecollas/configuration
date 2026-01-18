@@ -1,0 +1,16 @@
+# Ignore everything by default
+*
+
+# Allow only the following files and directories
+!.gitignore
+!AGENTS.md
+!config.toml
+!prompts/
+!prompts/**
+!rules/
+!rules/**
+!skills/
+!skills/**
+
+# Ignore
+skills/.system/
