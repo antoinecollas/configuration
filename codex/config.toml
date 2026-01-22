@@ -170,8 +170,8 @@ check_for_update_on_startup = true
 
 # Disable or re-enable a specific skill without deleting it.
 [[skills.config]]
-# path = "/path/to/skill"
-# enabled = false
+path = "./skills/example-skill"
+enabled = true
 
 ################################################################################
 # Experimental toggles (legacy; prefer [features])
@@ -274,6 +274,8 @@ remote_compaction = true
 remote_models = true
 powershell_utf8 = true
 child_agents_md = false
+collab = true
+steer = true
 
 ################################################################################
 # Define MCP servers under this table. Leave empty to disable.
