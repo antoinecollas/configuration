@@ -16,8 +16,8 @@
 # Primary model used by Codex. Default: "gpt-5.2-codex" on all platforms.
 model = "gpt-5.2-codex"
 
-# Model used by the /review feature (code reviews). Default: "gpt-5.2-codex".
-review_model = "gpt-5.2-codex"
+# Optional model override for /review. Default: unset (uses current session model).
+# review_model = "gpt-5.2-codex"
 
 # Provider id selected from [model_providers]. Default: "openai".
 model_provider = "openai"
@@ -36,7 +36,7 @@ model_provider = "openai"
 ################################################################################
 
 # Reasoning effort: minimal | low | medium | high | xhigh (default: medium; xhigh on gpt-5.2-codex and gpt-5.2)
-model_reasoning_effort = "xhigh"
+model_reasoning_effort = "medium"
 
 # Reasoning summary: auto | concise | detailed | none (default: auto)
 model_reasoning_summary = "detailed"
@@ -61,7 +61,9 @@ model_verbosity = "high"
 # compact_prompt = ""
 
 # Override built-in base instructions with a file path. Default: unset.
-# experimental_instructions_file = "/absolute/or/relative/path/to/instructions.txt"
+# model_instructions_file = "/absolute/or/relative/path/to/instructions.txt"
+
+# Migration note: experimental_instructions_file was renamed to model_instructions_file (deprecated).
 
 # Load the compact prompt override from a file. Default: unset.
 # experimental_compact_prompt_file = "/absolute/or/relative/path/to/compact_prompt.txt"
@@ -112,6 +114,9 @@ chatgpt_base_url = "https://chatgpt.com/backend-api/"
 
 # Preferred store for MCP OAuth credentials: auto (default) | file | keyring
 mcp_oauth_credentials_store = "auto"
+
+# Optional fixed port for MCP OAuth callback: 1-65535. Default: unset.
+# mcp_oauth_callback_port = 4321
 
 ################################################################################
 # Project Documentation Controls
@@ -235,16 +240,8 @@ animations = true
 # Show onboarding tooltips in the welcome screen. Default: true
 show_tooltips = true
 
-# Optional TUI2 scroll tuning (leave unset to use defaults).
-# scroll_events_per_tick = 0
-# scroll_wheel_lines = 0
-# scroll_trackpad_lines = 0
-# scroll_trackpad_accel_events = 0
-# scroll_trackpad_accel_max = 0
-# scroll_mode = "auto"  # auto | wheel | trackpad
-# scroll_wheel_tick_detect_max_ms = 0
-# scroll_wheel_like_max_duration_ms = 0
-# scroll_invert = false
+# Control alternate screen usage (auto skips it in Zellij to preserve scrollback).
+# alternate_screen = "auto"
 
 # Control whether users can submit feedback from `/feedback`. Default: true
 [feedback]
@@ -276,7 +273,7 @@ elevated_windows_sandbox = true
 remote_compaction = true
 remote_models = true
 powershell_utf8 = true
-tui2 = true
+child_agents_md = false
 
 ################################################################################
 # Define MCP servers under this table. Leave empty to disable.
@@ -320,17 +317,17 @@ tui2 = true
 [model_providers]
 
 # --- Example: override OpenAI with explicit base URL or headers ---
-[model_providers.openai]
-name = "OpenAI"
-base_url = "https://api.openai.com/v1"         # default if unset
-wire_api = "responses"                         # "responses" | "chat" (default varies)
-# requires_openai_auth = true                    # built-in OpenAI defaults to true
-request_max_retries = 10                        # default 4; max 100
-stream_max_retries = 10                         # default 5;  max 100
-stream_idle_timeout_ms = 3600000                # default 300_000 (5m)
-# experimental_bearer_token = "sk-example"      # optional dev-only direct bearer token
-# http_headers = { "X-Example" = "value" }
-# env_http_headers = { "OpenAI-Organization" = "OPENAI_ORGANIZATION", "OpenAI-Project" = "OPENAI_PROJECT" }
+# [model_providers.openai]
+# name = "OpenAI"
+# base_url = "https://api.openai.com/v1"         # default if unset
+# wire_api = "responses"                         # "responses" | "chat" (default varies)
+# # requires_openai_auth = true                    # built-in OpenAI defaults to true
+# # request_max_retries = 4                        # default 4; max 100
+# # stream_max_retries = 5                         # default 5;  max 100
+# # stream_idle_timeout_ms = 300000                # default 300_000 (5m)
+# # experimental_bearer_token = "sk-example"      # optional dev-only direct bearer token
+# # http_headers = { "X-Example" = "value" }
+# # env_http_headers = { "OpenAI-Organization" = "OPENAI_ORGANIZATION", "OpenAI-Project" = "OPENAI_PROJECT" }
 
 # --- Example: Azure (Chat/Responses depending on endpoint) ---
 # [model_providers.azure]
