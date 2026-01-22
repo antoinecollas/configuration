@@ -13,11 +13,3 @@ Then, produce an ExecPlan that follows PLANS.md *to the letter*.
 
 Task goal: $GOAL
 Write the ExecPlan to: $OUT
-
-Rules:
-- The plan must be fully self-contained for a novice with only the repo + this plan file.
-- Use the PLANS.md skeleton and requirements, including Progress/Surprises/Decision Log/Outcomes.
-- Name repository-relative files precisely; verify by reading the repo as needed.
-- Include concrete commands and expected outputs.
-- Do not ask the user for next steps; proceed to a complete plan.
-- When writing the plan file whose only content is the ExecPlan, omit outer triple-backticks (per PLANS.md).
