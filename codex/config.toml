@@ -36,7 +36,7 @@ model_provider = "openai"
 ################################################################################
 
 # Reasoning effort: minimal | low | medium | high | xhigh (default: medium; xhigh on gpt-5.2-codex and gpt-5.2)
-model_reasoning_effort = "medium"
+model_reasoning_effort = "xhigh"
 
 # Reasoning summary: auto | concise | detailed | none (default: auto)
 model_reasoning_summary = "detailed"
@@ -274,7 +274,6 @@ remote_compaction = true
 remote_models = true
 powershell_utf8 = true
 child_agents_md = false
-collab = true
 steer = true
 
 ################################################################################
@@ -282,6 +281,10 @@ steer = true
 ################################################################################
 
 [mcp_servers]
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["-y", "@playwright/mcp@latest"]
 
 # --- Example: STDIO transport ---
 # [mcp_servers.docs]
