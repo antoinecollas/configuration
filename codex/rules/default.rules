@@ -27,4 +27,6 @@ prefix_rule(pattern=["git", "push"], decision="prompt")
 
 # --- GitHub CLI workflow ---
 prefix_rule(pattern=["gh", "issue", "view"], decision="allow")
+prefix_rule(pattern=["gh", "auth"], decision="allow")
+prefix_rule(pattern=["gh", "pr", "view"], decision="allow")
 prefix_rule(pattern=["gh", "pr", "create"], decision="prompt")
