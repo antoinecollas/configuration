@@ -166,6 +166,7 @@ check_for_update_on_startup = true
 # cached returns pre-indexed results; live fetches the most recent data.
 # If you use --yolo or another full access sandbox setting, web search defaults to live.
 web_search = "cached"
+model_personality = "pragmatic"
 
 ################################################################################
 # Profiles (named presets)
@@ -289,6 +290,9 @@ remote_compaction = true
 remote_models = true
 powershell_utf8 = true
 child_agents_md = true
+apps = true
+steer = true
+personality = true
 
 ################################################################################
 # Define MCP servers under this table. Leave empty to disable.
