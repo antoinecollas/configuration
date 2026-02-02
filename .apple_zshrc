@@ -106,7 +106,7 @@ esac
 
 # codexwt <feature_name>
 # - Ensures you're inside a git repo
-# - Updates local main from upstream (checkout main + pull upstream main)
+# - Updates local main from origin (checkout main + pull origin main)
 # - Creates (or reuses) a branch named <feature_name>
 # - Creates a sibling worktree directory named: <repo>__<feature_name>
 # - cd's into that worktree and launches `codex`
@@ -130,9 +130,9 @@ codexwt() {
   branch="$feature"
   dir="$parent/${repo}__${feature}"
 
-  # Update main from upstream before branching/worktree creation
+  # Update main from origin before branching/worktree creation
   git -C "$top" checkout main || return $?
-  git -C "$top" pull upstream main || return $?
+  git -C "$top" pull origin main || return $?
 
   # Avoid clobbering an existing directory
   [ ! -e "$dir" ] || { echo "codexwt: path already exists: $dir" >&2; return 2; }
@@ -144,6 +144,10 @@ codexwt() {
   else
     git -C "$top" worktree add -b "$branch" "$dir" || return $?
   fi
+
+  # Copy all files (including dotfiles and gitignored) into the worktree.
+  # Exclude the repo's .git metadata.
+  rsync -a --info=progress2 --exclude='.git' "$top/" "$dir/" || return $?
 
   # Enter the worktree and launch Codex
   cd "$dir" || return 1
