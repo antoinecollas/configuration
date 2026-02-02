@@ -45,7 +45,7 @@ model_reasoning_summary = "detailed"
 model_verbosity = "high"
 
 # Force-enable reasoning summaries for current model (default: false)
-# model_supports_reasoning_summaries = false
+model_supports_reasoning_summaries = false
 
 ################################################################################
 # Instruction Overrides
@@ -158,6 +158,16 @@ windows_wsl_setup_acknowledged = false
 check_for_update_on_startup = true
 
 ################################################################################
+# Web Search
+################################################################################
+
+# Web search mode: disabled | cached | live. Default: "cached"
+# cached serves results from a web search cache (an OpenAI-maintained index).
+# cached returns pre-indexed results; live fetches the most recent data.
+# If you use --yolo or another full access sandbox setting, web search defaults to live.
+web_search = "cached"
+
+################################################################################
 # Profiles (named presets)
 ################################################################################
 
@@ -256,6 +266,9 @@ enabled = true
 # "hide_gpt-5.1-codex-max_migration_prompt" = true
 # model_migrations = { "gpt-4.1" = "gpt-5.1" }
 
+# Suppress the warning shown when under-development feature flags are enabled.
+# suppress_unstable_features_warning = true
+
 ################################################################################
 # Centralized Feature Flags (preferred)
 ################################################################################
@@ -263,7 +276,9 @@ enabled = true
 [features]
 # Leave this table empty to accept defaults. Set explicit booleans to opt in/out.
 shell_tool = true
-web_search_request = true
+# Deprecated legacy toggles; prefer the top-level `web_search` setting.
+# web_search_cached = false
+# web_search_request = false
 unified_exec = true
 shell_snapshot = true
 apply_patch_freeform = true
@@ -273,8 +288,7 @@ elevated_windows_sandbox = true
 remote_compaction = true
 remote_models = true
 powershell_utf8 = true
-child_agents_md = false
-steer = true
+child_agents_md = true
 
 ################################################################################
 # Define MCP servers under this table. Leave empty to disable.
@@ -312,7 +326,7 @@ args = ["-y", "@playwright/mcp@latest"]
 # enabled_tools = ["list_issues"]             # optional allow-list
 
 ################################################################################
-# Model Providers (extend/override built-ins)
+# Model Providers
 ################################################################################
 
 # Built-ins include:
@@ -321,16 +335,16 @@ args = ["-y", "@playwright/mcp@latest"]
 
 [model_providers]
 
-# --- Example: override OpenAI with explicit base URL or headers ---
-# [model_providers.openai]
-# name = "OpenAI"
-# base_url = "https://api.openai.com/v1"         # default if unset
-# wire_api = "responses"                         # "responses" | "chat" (default varies)
+# --- Example: OpenAI data residency with explicit base URL or headers ---
+# [model_providers.openaidr]
+# name = "OpenAI Data Residency"
+# base_url = "https://us.api.openai.com/v1"        # example with 'us' domain prefix
+# wire_api = "responses"                           # "responses" | "chat" (default varies)
 # # requires_openai_auth = true                    # built-in OpenAI defaults to true
 # # request_max_retries = 4                        # default 4; max 100
 # # stream_max_retries = 5                         # default 5;  max 100
 # # stream_idle_timeout_ms = 300000                # default 300_000 (5m)
-# # experimental_bearer_token = "sk-example"      # optional dev-only direct bearer token
+# # experimental_bearer_token = "sk-example"       # optional dev-only direct bearer token
 # # http_headers = { "X-Example" = "value" }
 # # env_http_headers = { "OpenAI-Organization" = "OPENAI_ORGANIZATION", "OpenAI-Project" = "OPENAI_PROJECT" }
 
@@ -369,7 +383,7 @@ args = ["-y", "@playwright/mcp@latest"]
 # include_apply_patch_tool = false
 # experimental_use_unified_exec_tool = false
 # experimental_use_freeform_apply_patch = false
-# tools_web_search = false
+# tools_web_search = false                # deprecated legacy alias; prefer `web_search`
 # features = { unified_exec = false }
 
 ################################################################################
