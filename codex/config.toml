@@ -166,7 +166,7 @@ check_for_update_on_startup = true
 # cached returns pre-indexed results; live fetches the most recent data.
 # If you use --yolo or another full access sandbox setting, web search defaults to live.
 web_search = "cached"
-model_personality = "pragmatic"
+personality = "pragmatic"
 
 ################################################################################
 # Profiles (named presets)
