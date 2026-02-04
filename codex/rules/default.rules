@@ -23,7 +23,7 @@ prefix_rule(pattern=["git", "stash"], decision="allow")
 prefix_rule(pattern=["git", "mv"], decision="allow")
 prefix_rule(pattern=["git", "log"], decision="allow")
 prefix_rule(pattern=["git", "branch"], decision="allow")
-prefix_rule(pattern=["git", "push"], decision="prompt")
+prefix_rule(pattern=["git", "push"], decision="allow")
 
 # --- GitHub CLI workflow ---
 prefix_rule(pattern=["gh", "issue", "view"], decision="allow")
