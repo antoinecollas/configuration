@@ -16,6 +16,10 @@
 # Primary model used by Codex. Default: "gpt-5.2-codex" on all platforms.
 model = "gpt-5.2-codex"
 
+# Experimental: default communication style for supported models. Default: unset.
+# Allowed values: none | friendly | pragmatic
+# model_personality = "friendly"
+
 # Optional model override for /review. Default: unset (uses current session model).
 # review_model = "gpt-5.2-codex"
 
@@ -39,7 +43,7 @@ model_provider = "openai"
 model_reasoning_effort = "xhigh"
 
 # Reasoning summary: auto | concise | detailed | none (default: auto)
-model_reasoning_summary = "detailed"
+model_reasoning_summary = "auto"
 
 # Text verbosity for GPT-5 family (Responses API): low | medium | high (default: medium)
 model_verbosity = "high"
@@ -166,7 +170,6 @@ check_for_update_on_startup = true
 # cached returns pre-indexed results; live fetches the most recent data.
 # If you use --yolo or another full access sandbox setting, web search defaults to live.
 web_search = "cached"
-personality = "pragmatic"
 
 ################################################################################
 # Profiles (named presets)
@@ -280,19 +283,16 @@ shell_tool = true
 # Deprecated legacy toggles; prefer the top-level `web_search` setting.
 # web_search_cached = false
 # web_search_request = false
-unified_exec = true
-shell_snapshot = true
-apply_patch_freeform = true
+unified_exec = false
+shell_snapshot = false
+apply_patch_freeform = false
 exec_policy = true
-experimental_windows_sandbox = true
-elevated_windows_sandbox = true
+experimental_windows_sandbox = false
+elevated_windows_sandbox = false
 remote_compaction = true
-remote_models = true
+remote_models = false
 powershell_utf8 = true
-child_agents_md = true
-apps = true
-steer = true
-personality = true
+child_agents_md = false
 
 ################################################################################
 # Define MCP servers under this table. Leave empty to disable.
@@ -382,6 +382,7 @@ args = ["-y", "@playwright/mcp@latest"]
 # model_reasoning_effort = "medium"
 # model_reasoning_summary = "auto"
 # model_verbosity = "medium"
+# model_personality = "friendly" # or "pragmatic" or "none"
 # chatgpt_base_url = "https://chatgpt.com/backend-api/"
 # experimental_compact_prompt_file = "./compact_prompt.txt"
 # include_apply_patch_tool = false
