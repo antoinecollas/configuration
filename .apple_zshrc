@@ -104,21 +104,23 @@ case ":$PATH:" in
 esac
 # pnpm end
 
-# codexwt <feature_name>
+# wt <feature_name>
 # - Ensures you're inside a git repo
 # - Updates local main from origin (checkout main + pull origin main)
 # - Creates (or reuses) a branch named <feature_name>
 # - Creates a sibling worktree directory named: <repo>__<feature_name>
 # - cd's into that worktree and launches `codex`
-codexwt() {
+wt() {
   # Enforce exact usage: one argument only
-  [ "$#" -eq 1 ] || { echo "Usage: codexwt <feature_name>" >&2; return 2; }
+  [ "$#" -eq 1 ] || { echo "Usage: wt <feature_name>" >&2; return 2; }
 
   local feature="$1"
+  # escape slashes for directory name
+  local feature_dir="${feature//\//__}"
   local top repo parent dir branch
 
   # Find the repo root; fail if not in a git repo
-  top="$(git rev-parse --show-toplevel 2>/dev/null)" || { echo "codexwt: not inside a git repo" >&2; return 2; }
+  top="$(git rev-parse --show-toplevel 2>/dev/null)" || { echo "wt: not inside a git repo" >&2; return 2; }
 
   # Build names/paths:
   # - repo: repository folder name (used to name the worktree dir)
@@ -128,14 +130,14 @@ codexwt() {
   repo="$(basename "$top")"
   parent="$(dirname "$top")"
   branch="$feature"
-  dir="$parent/${repo}__${feature}"
+  dir="$parent/${repo}__${feature_dir}"
 
   # Update main from origin before branching/worktree creation
   git -C "$top" checkout main || return $?
   git -C "$top" pull origin main || return $?
 
   # Avoid clobbering an existing directory
-  [ ! -e "$dir" ] || { echo "codexwt: path already exists: $dir" >&2; return 2; }
+  [ ! -e "$dir" ] || { echo "wt: path already exists: $dir" >&2; return 2; }
 
   # If the branch already exists locally, add a worktree using it.
   # Otherwise, create the branch and the worktree in one go.
@@ -154,40 +156,41 @@ codexwt() {
   command codex
 }
 
-# codexrm <feature_name>
+# wtrm <feature_name>
 # - Ensures you're inside a git repo
 # - Removes the sibling worktree directory: <repo>__<feature_name>
 # - Deletes the local branch named <feature_name>
 # Notes:
 # - Uses --force for worktree removal (handy if Codex left files around)
 # - Uses -D for branch deletion (force delete); adjust to -d if you prefer safety
-codexrm() {
-  # Enforce exact usage: one argument only
-  [ "$#" -eq 1 ] || { echo "Usage: codexrm <feature_name>" >&2; return 2; }
+wtrm() {
+  [ "$#" -eq 1 ] || { echo "Usage: wtrm <feature_name>" >&2; return 2; }
 
   local feature="$1"
+  # escape slashes for directory name
+  local feature_dir="${feature//\//__}"
   local top repo parent dir branch
 
   # Find the repo root; fail if not in a git repo
-  top="$(git rev-parse --show-toplevel 2>/dev/null)" || { echo "codexrm: not inside a git repo" >&2; return 2; }
+  top="$(git rev-parse --show-toplevel 2>/dev/null)" || { echo "wtrm: not inside a git repo" >&2; return 2; }
 
   # Reconstruct the same branch/dir names used by codexwt
   repo="$(basename "$top")"
   parent="$(dirname "$top")"
   branch="$feature"
-  dir="$parent/${repo}__${feature}"
+  dir="$parent/${repo}__${feature_dir}"
 
   # Remove the worktree directory if it exists
   if [ -e "$dir" ]; then
     git -C "$top" worktree remove --force "$dir" || return $?
   else
-    echo "codexrm: no worktree path: $dir" >&2
+    echo "wtrm: no worktree path: $dir" >&2
   fi
 
   # Delete the local branch if it exists
   if git -C "$top" show-ref --verify --quiet "refs/heads/$branch"; then
     git -C "$top" branch -D "$branch" || return $?
   else
-    echo "codexrm: no branch: $branch" >&2
+    echo "wtrm: no branch: $branch" >&2
   fi
 }
