@@ -14,11 +14,11 @@
 ################################################################################
 
 # Primary model used by Codex. Default: "gpt-5.2-codex" on all platforms.
-model = "gpt-5.2-codex"
+model = "gpt-5.3-codex"
 
-# Experimental: default communication style for supported models. Default: unset.
+# Default communication style for supported models. Default: "friendly".
 # Allowed values: none | friendly | pragmatic
-# model_personality = "friendly"
+personality = "pragmatic"
 
 # Optional model override for /review. Default: unset (uses current session model).
 # review_model = "gpt-5.2-codex"
@@ -34,13 +34,14 @@ model_provider = "openai"
 # model_context_window = 128000       # tokens; default: auto for model
 # model_auto_compact_token_limit = 0  # tokens; unset uses model defaults
 # tool_output_token_limit = 10000     # tokens stored per tool output; default: 10000 for gpt-5.2-codex
+# log_dir = "/absolute/path/to/codex-logs" # directory for Codex logs; default: "$CODEX_HOME/log"
 
 ################################################################################
 # Reasoning & Verbosity (Responses API capable models)
 ################################################################################
 
 # Reasoning effort: minimal | low | medium | high | xhigh (default: medium; xhigh on gpt-5.2-codex and gpt-5.2)
-model_reasoning_effort = "xhigh"
+model_reasoning_effort = "high"
 
 # Reasoning summary: auto | concise | detailed | none (default: auto)
 model_reasoning_summary = "auto"
@@ -71,6 +72,9 @@ model_supports_reasoning_summaries = false
 
 # Load the compact prompt override from a file. Default: unset.
 # experimental_compact_prompt_file = "/absolute/or/relative/path/to/compact_prompt.txt"
+
+# Legacy name for apply_patch_freeform. Default: false
+include_apply_patch_tool = false
 
 
 ################################################################################
@@ -184,7 +188,7 @@ web_search = "cached"
 
 # Disable or re-enable a specific skill without deleting it.
 [[skills.config]]
-path = "./skills/example-skill"
+path = "./skills/"
 enabled = true
 
 ################################################################################
@@ -248,6 +252,9 @@ persistence = "save-all"
 # Examples: false | ["agent-turn-complete", "approval-requested"]
 notifications = false
 
+# Notification mechanism for terminal alerts: auto | osc9 | bel. Default: "auto"
+# notification_method = "auto"
+
 # Enables welcome/status/spinner animations. Default: true
 animations = true
 
@@ -256,6 +263,9 @@ show_tooltips = true
 
 # Control alternate screen usage (auto skips it in Zellij to preserve scrollback).
 # alternate_screen = "auto"
+
+# Ordered list of footer status-line item IDs. Default: null (disabled).
+# status_line = ["model", "context-remaining", "git-branch"]
 
 # Control whether users can submit feedback from `/feedback`. Default: true
 [feedback]
@@ -280,17 +290,22 @@ enabled = true
 [features]
 # Leave this table empty to accept defaults. Set explicit booleans to opt in/out.
 shell_tool = true
+# apps = false
 # Deprecated legacy toggles; prefer the top-level `web_search` setting.
+# web_search = false
 # web_search_cached = false
 # web_search_request = false
 unified_exec = false
 shell_snapshot = false
 apply_patch_freeform = false
-exec_policy = true
+# personality = true
+request_rule = true
+collaboration_modes = true
+use_linux_sandbox_bwrap = false
 experimental_windows_sandbox = false
 elevated_windows_sandbox = false
-remote_compaction = true
 remote_models = false
+runtime_metrics = false
 powershell_utf8 = true
 child_agents_md = false
 
@@ -300,13 +315,10 @@ child_agents_md = false
 
 [mcp_servers]
 
-[mcp_servers.playwright]
-command = "npx"
-args = ["-y", "@playwright/mcp@latest"]
-
 # --- Example: STDIO transport ---
 # [mcp_servers.docs]
 # enabled = true                       # optional; default true
+# required = true                      # optional; fail startup/resume if this server cannot initialize
 # command = "docs-server"                 # required
 # args = ["--port", "4000"]               # optional
 # env = { "API_KEY" = "value" }           # optional key/value pairs copied as-is
@@ -321,6 +333,7 @@ args = ["-y", "@playwright/mcp@latest"]
 # --- Example: Streamable HTTP transport ---
 # [mcp_servers.github]
 # enabled = true                          # optional; default true
+# required = true                         # optional; fail startup/resume if this server cannot initialize
 # url = "https://github-mcp.example.com/mcp"  # required
 # bearer_token_env_var = "GITHUB_TOKEN"        # optional; Authorization: Bearer <token>
 # http_headers = { "X-Example" = "value" }    # optional static headers
@@ -382,14 +395,24 @@ args = ["-y", "@playwright/mcp@latest"]
 # model_reasoning_effort = "medium"
 # model_reasoning_summary = "auto"
 # model_verbosity = "medium"
-# model_personality = "friendly" # or "pragmatic" or "none"
+# personality = "friendly" # or "pragmatic" or "none"
 # chatgpt_base_url = "https://chatgpt.com/backend-api/"
 # experimental_compact_prompt_file = "./compact_prompt.txt"
 # include_apply_patch_tool = false
 # experimental_use_unified_exec_tool = false
 # experimental_use_freeform_apply_patch = false
-# tools_web_search = false                # deprecated legacy alias; prefer `web_search`
+# tools.web_search = false             # deprecated legacy alias; prefer top-level `web_search`
 # features = { unified_exec = false }
+
+################################################################################
+# Apps / Connectors
+################################################################################
+
+# Optional per-app controls.
+[apps]
+# [apps.google_drive]
+# enabled = false
+# disabled_reason = "user" # or "unknown"
 
 ################################################################################
 # Projects (trust levels)
