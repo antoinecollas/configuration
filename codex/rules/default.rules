@@ -32,4 +32,15 @@ prefix_rule(pattern=["gh", "pr", "view"], decision="allow")
 prefix_rule(pattern=["gh", "run", "view"], decision="allow")
 prefix_rule(pattern=["gh", "run", "list"], decision="allow")
 prefix_rule(pattern=["gh", "release", "view"], decision="allow")
+prefix_rule(pattern=["gh", "pr", "checks"], decision="allow")
 prefix_rule(pattern=["gh", "pr", "create"], decision="prompt")
+
+# --- Prisma ---
+prefix_rule(pattern=["npx", "prisma", "validate"], decision="allow")
+prefix_rule(pattern=["npx", "prisma", "format"], decision="allow")
+
+# --- Docker ---
+prefix_rule(pattern=["docker", "run"], decision="allow")
+prefix_rule(pattern=["docker", "build"], decision="allow")
+prefix_rule(pattern=["docker", "pull"], decision="allow")
+prefix_rule(pattern=["docker", "rm"], decision="allow")
