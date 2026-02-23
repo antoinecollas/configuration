@@ -23,7 +23,7 @@ alias ll='ls -alh'
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
 
 # Add remote_scripts to PATH
-export PATH="$HOME/Dropbox/karavela/remote_scripts:$PATH"
+export PATH="$HOME/configuration/remote_scripts:$PATH"
 alias jzrsync='rsync_jz.sh'
 alias jzmount='mount_jz.sh'
 alias jzumount='umount_jz.sh'

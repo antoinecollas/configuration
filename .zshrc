@@ -19,9 +19,6 @@ export OMP_NUM_THREADS=1
 # ll command
 alias ll='ls -alh'
 
-# CDPATH for cd command
-export CDPATH=~/Dropbox/postdoc/
-
 # Set ulimit
 ulimit -Sv 100000000	# 10GB
 
