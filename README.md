@@ -20,7 +20,7 @@ This repo is optimized for day-to-day reuse on macOS, with machine-specific over
 | Path | Purpose |
 | --- | --- |
 | `.zshrc` | Main Zsh config (aliases, prompt, helper functions, conda init, and tool PATHs). |
-| `.zshrc.local` | Local machine overrides (not tracked by Git). |
+| `.zshrc.local.example` | Template for local machine overrides. |
 | `remote_scripts/` | SSHFS mount/unmount and rsync helpers for remote cluster workflows. |
 | `nvim/` | Neovim config (`init.lua`) and lockfile (`lazy-lock.json`). |
 | `codex/` | Codex config, prompts, rules, AGENTS instructions, and reusable skills. |
@@ -47,7 +47,7 @@ ln -sf ~/configuration/nvim/init.lua ~/.config/nvim/init.lua
 Create local overrides:
 
 ```bash
-touch ~/.zshrc.local
+cp ~/configuration/.zshrc.local.example ~/.zshrc.local
 ```
 
 ## Prerequisites
@@ -77,6 +77,7 @@ Use this for anything machine- or identity-specific:
 - private hostnames
 - user IDs
 - local paths
+- Jean-Zay variables (`JZ_USER`, `JZ_HOME`, `JZ_WORK`, `JZ_SCRATCH`)
 - tokens/secrets
 
 `~/.zshrc.local` is intentionally ignored by Git.
