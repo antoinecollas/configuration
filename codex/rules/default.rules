@@ -6,7 +6,8 @@ prefix_rule(pattern=["uv"], decision="allow")
 prefix_rule(pattern=["ruff"], decision="allow")
 prefix_rule(pattern=["pre-commit"], decision="allow")
 prefix_rule(pattern=["pytest"], decision="allow")
-prefix_rule(pattern=["python", "-m", "pytest"], decision="allow")
+prefix_rule(pattern=["python"], decision="allow")
+prefix_rule(pattern=["uv", "run"], decision="allow")
 
 # --- Git workflow (allow everything you listed) ---
 prefix_rule(pattern=["git", "status"], decision="allow")
@@ -24,6 +25,7 @@ prefix_rule(pattern=["git", "mv"], decision="allow")
 prefix_rule(pattern=["git", "log"], decision="allow")
 prefix_rule(pattern=["git", "branch"], decision="allow")
 prefix_rule(pattern=["git", "push"], decision="allow")
+prefix_rule(pattern=["git", "restore"], decision="allow")
 
 # --- GitHub CLI workflow ---
 prefix_rule(pattern=["gh", "issue", "view"], decision="allow")
@@ -35,9 +37,16 @@ prefix_rule(pattern=["gh", "release", "view"], decision="allow")
 prefix_rule(pattern=["gh", "pr", "checks"], decision="allow")
 prefix_rule(pattern=["gh", "pr", "create"], decision="prompt")
 
-# --- Prisma ---
+# --- Node.js ---
 prefix_rule(pattern=["npx", "prisma", "validate"], decision="allow")
 prefix_rule(pattern=["npx", "prisma", "format"], decision="allow")
+prefix_rule(pattern=["npm", "install"], decision="allow")
+prefix_rule(pattern=["npm", "run", "make"], decision="allow")
+prefix_rule(pattern=["npm", "run", "build"], decision="allow")
+prefix_rule(pattern=["npm", "run", "dev"], decision="allow")
+prefix_rule(pattern=["npm", "run", "start"], decision="allow")
+prefix_rule(pattern=["npm", "run", "lint"], decision="allow")
+prefix_rule(pattern=["npm", "run", "package"], decision="allow")
 
 # --- Docker ---
 prefix_rule(pattern=["docker", "run"], decision="allow")
