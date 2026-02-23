@@ -61,29 +61,11 @@ touch ~/.zshrc.local
 
 ## Prerequisites
 
-Core:
+Required: `zsh`, `git`, `ssh`, `rsync`.
 
-- `zsh`
-- `git`
-- `rsync`
-- `ssh`
+For remote scripts: `sshfs` and `fswatch`.
 
-Remote workflow:
-
-- `sshfs` (for mounting remote paths)
-- `fswatch` (for continuous sync in `rsync_jz.sh`)
-
-macOS extras used by `.apple_zshrc`:
-
-- Homebrew (`brew`)
-- `starship`
-- `zsh-autosuggestions`
-
-Optional:
-
-- Miniconda/Conda
-- Jupyter (`nbconvert`) for `open_notebook`
-- Neovim (`nvim`) and tools installed via `lazy.nvim`/`mason.nvim`
+Optional: `nvim`, Conda, Jupyter (`nbconvert`), `starship`, `zsh-autosuggestions`.
 
 ## Shell configuration
 
