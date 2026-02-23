@@ -10,7 +10,7 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
-# openblas
+# limit number of threads to 1
 export OPENBLAS_NUM_THREADS=1 
 export MKL_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
@@ -19,35 +19,178 @@ export OMP_NUM_THREADS=1
 # ll command
 alias ll='ls -alh'
 
-# Set ulimit
-ulimit -Sv 100000000	# 10GB
+# Load host-specific additions
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
 
-# squeue
-alias squeue_me='squeue -u acollas'
-alias squeue_all='squeue -u all'
-alias slurm_top="squeue -h -o '%.8u %.2C %.2t' -t R | awk '{arr[\$1]+=\$2} END {for (i in arr) {print i \": \" arr[i] \" cores\"}}' | sort -k2,2nr"
-
-
-# specific to linux
-
-# cuda
-export PATH=/usr/local/cuda/bin${PATH:+:${PATH}}$ 
-export LD_LIBRARY_PATH=/usr/local/cuda/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
-
-# julia
-export PATH=$PATH:~/julia/bin/
+# Add remote_scripts to PATH
+export PATH="$HOME/configuration/remote_scripts:$PATH"
+alias jzrsync='rsync_jz.sh'
+alias jzmount='mount_jz.sh'
+alias jzumount='umount_jz.sh'
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('${HOME}/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+__conda_setup="$('$HOME/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "${HOME}/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "${HOME}/miniconda3/etc/profile.d/conda.sh"
+    if [ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "$HOME/miniconda3/etc/profile.d/conda.sh"
     else
-        export PATH="${HOME}/miniconda3/bin:$PATH"
+        export PATH="$HOME/miniconda3/bin:$PATH"
     fi
 fi
 unset __conda_setup
 # <<< conda initialize <<<
+
+# specific to Apple
+
+# to get brew on Apple M1
+eval $(/opt/homebrew/bin/brew shellenv)
+
+open_notebook() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: open_notebook notebook.ipynb"
+        return 1
+    fi
+
+    local notebook="$1"
+    local pdf_file="${notebook%.ipynb}.pdf"
+
+    # Check if the input file exists
+    if [ ! -f "$notebook" ]; then
+        echo "Error: File '$notebook' not found!"
+        return 1
+    fi
+
+    # Convert the notebook to PDF using nbconvert
+    jupyter nbconvert --to pdf "$notebook"
+
+    if [ $? -eq 0 ]; then
+        echo "PDF successfully created: $pdf_file"
+
+        # Open the PDF file
+        if command -v xdg-open &> /dev/null; then
+            xdg-open "$pdf_file"
+        elif command -v open &> /dev/null; then
+            open "$pdf_file"
+        else
+            echo "Error: No suitable PDF viewer found!"
+        fi
+    else
+        echo "Error: Failed to convert '$notebook' to PDF."
+    fi
+}
+
+# Ruby paths
+export PATH="$(brew --prefix ruby)/bin:$PATH"
+export PATH="/opt/homebrew/lib/ruby/gems/3.4.0/bin:$PATH"
+
+# Scaleway CLI autocomplete initialization.
+eval "$(scw autocomplete script shell=zsh)"
+
+# Starship prompt
+export STARSHIP_CONFIG="$HOME/configuration/starship.toml"
+eval "$(starship init zsh)"
+
+# Load zsh-autosuggestions
+source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# pnpm
+export PNPM_HOME="$HOME/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+# wt <feature_name>
+# - Ensures you're inside a git repo
+# - Updates local main from origin (checkout main + pull origin main)
+# - Creates (or reuses) a branch named <feature_name>
+# - Creates a sibling worktree directory named: <repo>__<feature_name>
+# - cd's into that worktree and launches `codex`
+wt() {
+  # Enforce exact usage: one argument only
+  [ "$#" -eq 1 ] || { echo "Usage: wt <feature_name>" >&2; return 2; }
+
+  local feature="$1"
+  # escape slashes for directory name
+  local feature_dir="${feature//\//__}"
+  local top repo parent dir branch
+
+  # Find the repo root; fail if not in a git repo
+  top="$(git rev-parse --show-toplevel 2>/dev/null)" || { echo "wt: not inside a git repo" >&2; return 2; }
+
+  # Build names/paths:
+  # - repo: repository folder name (used to name the worktree dir)
+  # - parent: parent directory of the repo root (so worktree is a sibling)
+  # - branch: branch name equals feature name
+  # - dir: sibling worktree directory path (e.g., ../myrepo__my-feature)
+  repo="$(basename "$top")"
+  parent="$(dirname "$top")"
+  branch="$feature"
+  dir="$parent/${repo}__${feature_dir}"
+
+  # Update main from origin before branching/worktree creation
+  git -C "$top" checkout main || return $?
+  git -C "$top" pull origin main || return $?
+
+  # Avoid clobbering an existing directory
+  [ ! -e "$dir" ] || { echo "wt: path already exists: $dir" >&2; return 2; }
+
+  # If the branch already exists locally, add a worktree using it.
+  # Otherwise, create the branch and the worktree in one go.
+  if git -C "$top" show-ref --verify --quiet "refs/heads/$branch"; then
+    git -C "$top" worktree add "$dir" "$branch" || return $?
+  else
+    git -C "$top" worktree add -b "$branch" "$dir" || return $?
+  fi
+
+  # Copy all files (including dotfiles and gitignored) into the worktree.
+  # Exclude the repo's .git metadata.
+  rsync -a --info=progress2 --exclude='.git' "$top/" "$dir/" || return $?
+
+  # Enter the worktree and launch Codex
+  cd "$dir" || return 1
+  command codex
+}
+
+# wtrm <feature_name>
+# - Ensures you're inside a git repo
+# - Removes the sibling worktree directory: <repo>__<feature_name>
+# - Deletes the local branch named <feature_name>
+# Notes:
+# - Uses --force for worktree removal (handy if Codex left files around)
+# - Uses -D for branch deletion (force delete); adjust to -d if you prefer safety
+wtrm() {
+  [ "$#" -eq 1 ] || { echo "Usage: wtrm <feature_name>" >&2; return 2; }
+
+  local feature="$1"
+  # escape slashes for directory name
+  local feature_dir="${feature//\//__}"
+  local top repo parent dir branch
+
+  # Find the repo root; fail if not in a git repo
+  top="$(git rev-parse --show-toplevel 2>/dev/null)" || { echo "wtrm: not inside a git repo" >&2; return 2; }
+
+  # Reconstruct the same branch/dir names used by codexwt
+  repo="$(basename "$top")"
+  parent="$(dirname "$top")"
+  branch="$feature"
+  dir="$parent/${repo}__${feature_dir}"
+
+  # Remove the worktree directory if it exists
+  if [ -e "$dir" ]; then
+    git -C "$top" worktree remove --force "$dir" || return $?
+  else
+    echo "wtrm: no worktree path: $dir" >&2
+  fi
+
+  # Delete the local branch if it exists
+  if git -C "$top" show-ref --verify --quiet "refs/heads/$branch"; then
+    git -C "$top" branch -D "$branch" || return $?
+  else
+    echo "wtrm: no branch: $branch" >&2
+  fi
+}
