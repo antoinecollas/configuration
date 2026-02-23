@@ -1,7 +1,7 @@
 # configuration
 
 Personal dotfiles and developer configuration for shell, editor, Codex, and remote HPC workflows.
-This repo is optimized for day-to-day reuse on macOS and Linux, with machine-specific overrides kept out of version control.
+This repo is optimized for day-to-day reuse on macOS, with machine-specific overrides kept out of version control.
 
 ## Contents
 
@@ -12,7 +12,6 @@ This repo is optimized for day-to-day reuse on macOS and Linux, with machine-spe
 - [Remote scripts (Jean-Zay workflow)](#remote-scripts-jean-zay-workflow)
 - [Neovim setup](#neovim-setup)
 - [Codex setup](#codex-setup)
-- [Maintenance guidelines](#maintenance-guidelines)
 - [Troubleshooting](#troubleshooting)
 - [Usage note](#usage-note)
 
@@ -20,8 +19,7 @@ This repo is optimized for day-to-day reuse on macOS and Linux, with machine-spe
 
 | Path | Purpose |
 | --- | --- |
-| `.zshrc` | Linux-oriented Zsh config (threads, CUDA/Julia paths, conda init, aliases). |
-| `.apple_zshrc` | macOS-oriented Zsh config (brew, prompt, aliases, helper functions). |
+| `.zshrc` | Main Zsh config (aliases, prompt, helper functions, conda init, and tool PATHs). |
 | `.zshrc.local` | Local machine overrides (not tracked by Git). |
 | `remote_scripts/` | SSHFS mount/unmount and rsync helpers for remote cluster workflows. |
 | `nvim/` | Neovim config (`init.lua`) and lockfile (`lazy-lock.json`). |
@@ -37,17 +35,10 @@ git clone https://github.com/<your-user>/configuration.git ~/configuration
 cd ~/configuration
 ```
 
-Pick your shell config by platform:
-
-- Linux: use `~/.zshrc` from this repo.
-- macOS: use `~/.apple_zshrc` from this repo.
-
 Example symlink setup:
 
 ```bash
 ln -sf ~/configuration/.zshrc ~/.zshrc
-# or on macOS:
-ln -sf ~/configuration/.apple_zshrc ~/.zshrc
 
 mkdir -p ~/.config/nvim
 ln -sf ~/configuration/nvim/init.lua ~/.config/nvim/init.lua
@@ -69,19 +60,14 @@ Optional: `nvim`, Conda, Jupyter (`nbconvert`), `starship`, `zsh-autosuggestions
 
 ## Shell configuration
 
-### Linux (`.zshrc`)
+### Main shell file (`.zshrc`)
 
 - Limits BLAS/OMP thread count to `1`.
-- Defines common aliases (for example `ll`, Slurm helpers).
-- Sets CUDA and Julia-related paths.
-- Includes a conda initialization block managed by `conda init`.
-
-### macOS (`.apple_zshrc`)
-
 - Loads host-specific additions from `~/.zshrc.local`.
 - Adds `~/configuration/remote_scripts` to `PATH`.
 - Defines aliases: `jzmount` -> `mount_jz.sh`, `jzumount` -> `umount_jz.sh`, `jzrsync` -> `rsync_jz.sh`.
 - Includes helper functions: `open_notebook` (convert/open notebook PDF), `wt` (create worktree + launch codex), `wtrm` (remove worktree + local branch).
+- Includes the conda initialization block managed by `conda init`.
 - Enables Starship prompt and `zsh-autosuggestions`.
 
 ### Local overrides (`.zshrc.local`)
@@ -144,14 +130,6 @@ Notes:
 - enabled features (apps, multi-agent)
 
 `codex/AGENTS.md` and `codex/skills/` contain reusable instructions and automation workflows used by Codex agents.
-
-## Maintenance guidelines
-
-- Keep tracked configs reusable and non-sensitive.
-- Put machine- or account-specific data in `~/.zshrc.local`.
-- If you add scripts, include usage/help text and update this README.
-- Prefer small, focused commits grouped by topic (shell, nvim, codex, remote scripts).
-- Re-check `PATH` changes to avoid stale directories.
 
 ## Troubleshooting
 
