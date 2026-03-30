@@ -41,12 +41,7 @@ prefix_rule(pattern=["gh", "pr", "create"], decision="prompt")
 prefix_rule(pattern=["npx", "prisma", "validate"], decision="allow")
 prefix_rule(pattern=["npx", "prisma", "format"], decision="allow")
 prefix_rule(pattern=["npm", "install"], decision="allow")
-prefix_rule(pattern=["npm", "run", "make"], decision="allow")
-prefix_rule(pattern=["npm", "run", "build"], decision="allow")
-prefix_rule(pattern=["npm", "run", "dev"], decision="allow")
-prefix_rule(pattern=["npm", "run", "start"], decision="allow")
-prefix_rule(pattern=["npm", "run", "lint"], decision="allow")
-prefix_rule(pattern=["npm", "run", "package"], decision="allow")
+prefix_rule(pattern=["npm", "run"], decision="allow")
 
 # --- Docker ---
 prefix_rule(pattern=["docker", "run"], decision="allow")
