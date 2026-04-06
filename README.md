@@ -21,6 +21,7 @@ This repo is optimized for day-to-day reuse on macOS, with machine-specific over
 | --- | --- |
 | `.zshrc` | Main Zsh config (aliases, prompt, helper functions, conda init, and tool PATHs). |
 | `.zshrc.local.example` | Template for local machine overrides. |
+| `scripts/` | Small personal CLI helpers available from the shell. |
 | `remote_scripts/` | SSHFS mount/unmount and rsync helpers for remote cluster workflows. |
 | `nvim/` | Neovim config (`init.lua`) and lockfile (`lazy-lock.json`). |
 | `codex/` | Codex config, prompts, rules, AGENTS instructions, and reusable skills. |
@@ -64,6 +65,7 @@ Optional: `nvim`, Conda, Jupyter (`nbconvert`), `starship`, `zsh-autosuggestions
 
 - Limits BLAS/OMP thread count to `1`.
 - Loads host-specific additions from `~/.zshrc.local`.
+- Adds `~/configuration/scripts` to `PATH`.
 - Adds `~/configuration/remote_scripts` to `PATH`.
 - Defines aliases: `jzmount` -> `mount_jz.sh`, `jzumount` -> `umount_jz.sh`, `jzrsync` -> `rsync_jz.sh`.
 - Includes helper functions: `open_notebook` (convert/open notebook PDF), `wt` (create worktree + launch codex), `wtrm` (remove worktree + local branch).
@@ -81,6 +83,30 @@ Use this for anything machine- or identity-specific:
 - tokens/secrets
 
 `~/.zshrc.local` is intentionally ignored by Git.
+
+### Personal CLI helpers
+
+This repo now exposes `build_database_url` as a global shell command.
+
+Example:
+
+```bash
+build_database_url \
+  --username my_user \
+  --host localhost \
+  --port 5432 \
+  --database my_db
+```
+
+If `--password` is omitted, the command prompts with `DB password:`.
+
+After reloading your shell, it will be available anywhere because
+`~/configuration/scripts` is added to `PATH`.
+
+If you pass `--protocol postgres`, the helper rewrites it to
+`postgresql`.
+
+Use `build_database_url --help` to see the built-in helper text.
 
 ## Remote scripts (Jean-Zay workflow)
 

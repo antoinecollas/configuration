@@ -22,6 +22,9 @@ alias ll='ls -alh'
 # Load host-specific additions
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
 
+# Add general scripts to PATH
+export PATH="$HOME/configuration/scripts:$PATH"
+
 # Add remote_scripts to PATH
 export PATH="$HOME/configuration/remote_scripts:$PATH"
 alias jzrsync='rsync_jz.sh'
