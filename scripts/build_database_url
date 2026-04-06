@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from urllib.parse import quote_plus
+from urllib.parse import quote
 import argparse
 import getpass
 
@@ -16,9 +16,9 @@ def build_database_url(
     if protocol == "postgres":
         protocol = "postgresql"
 
-    user = quote_plus(username)
-    pwd = quote_plus(password)
-    db = quote_plus(database)
+    user = quote(username, safe="")
+    pwd = quote(password, safe="")
+    db = quote(database, safe="")
     return f"{protocol}://{user}:{pwd}@{host}:{port}/{db}"
 
 
