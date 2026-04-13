@@ -10,6 +10,7 @@ This repo is optimized for day-to-day reuse on macOS, with machine-specific over
 - [Prerequisites](#prerequisites)
 - [Shell configuration](#shell-configuration)
 - [Remote scripts (Jean-Zay workflow)](#remote-scripts-jean-zay-workflow)
+- [Remote scripts (VM workflow)](#remote-scripts-vm-workflow)
 - [Neovim setup](#neovim-setup)
 - [Codex setup](#codex-setup)
 - [Troubleshooting](#troubleshooting)
@@ -68,6 +69,7 @@ Optional: `nvim`, Conda, Jupyter (`nbconvert`), `starship`, `zsh-autosuggestions
 - Adds `~/configuration/scripts` to `PATH`.
 - Adds `~/configuration/remote_scripts` to `PATH`.
 - Defines aliases: `jzmount` -> `mount_jz.sh`, `jzumount` -> `umount_jz.sh`, `jzrsync` -> `rsync_jz.sh`.
+- Defines alias: `vmrsync` -> `vmrsync.sh`.
 - Includes helper functions: `open_notebook` (convert/open notebook PDF), `wt` (create worktree + launch codex), `wtrm` (remove worktree + local branch).
 - Includes the conda initialization block managed by `conda init`.
 - Enables Starship prompt and `zsh-autosuggestions`.
@@ -135,6 +137,46 @@ Notes:
 - `rsync_jz.sh` syncs tracked Git files only when source is a Git repo.
 - Continuous mode uses `fswatch`; stop with `Ctrl-C`.
 
+## Remote scripts (VM workflow)
+
+Files:
+
+- `remote_scripts/vmrsync.sh`: one-way local -> remote sync, then continuous watch/sync
+
+Expected setup:
+
+- SSH access to your remote VM
+- Remote machine has a writable home directory
+
+Typical usage:
+
+```bash
+cd ~/path/to/project
+vmrsync <ip-or-host>
+```
+
+This defaults to:
+
+- local source: current directory
+- remote destination: `~/work/<current-directory-name>`
+
+Optional usage:
+
+```bash
+vmrsync <ip-or-host> ~/path/to/project custom-remote-subpath
+```
+
+Environment variables:
+
+- `vmrsync` defaults to the remote user `root`
+- `VM_FSWATCH_LATENCY`: optional `fswatch` latency override
+
+Notes:
+
+- `vmrsync.sh` syncs tracked Git files only when source is a Git repo.
+- Non-Git mode syncs the whole directory except `.git`.
+- Continuous mode uses `fswatch`; stop with `Ctrl-C`.
+
 ## Neovim setup
 
 `nvim/init.lua` bootstraps `lazy.nvim` and configures:
@@ -160,9 +202,9 @@ Notes:
 
 ## Troubleshooting
 
-`jzmount`/`jzrsync` fails:
+`jzmount`/`jzrsync`/`vmrsync` fails:
 
-- Verify SSH alias exists: `ssh <ssh-alias>`
+- Verify SSH access works: `ssh <ssh-alias>` or `ssh <ip-or-host>`
 - Verify required tools: `command -v sshfs fswatch rsync`
 
 Aliases not found:

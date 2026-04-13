@@ -30,6 +30,7 @@ export PATH="$HOME/configuration/remote_scripts:$PATH"
 alias jzrsync='rsync_jz.sh'
 alias jzmount='mount_jz.sh'
 alias jzumount='umount_jz.sh'
+alias vmrsync='vmrsync.sh'
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
