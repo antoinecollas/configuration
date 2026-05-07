@@ -35,7 +35,8 @@ prefix_rule(pattern=["gh", "run", "view"], decision="allow")
 prefix_rule(pattern=["gh", "run", "list"], decision="allow")
 prefix_rule(pattern=["gh", "release", "view"], decision="allow")
 prefix_rule(pattern=["gh", "pr", "checks"], decision="allow")
-prefix_rule(pattern=["gh", "pr", "create"], decision="prompt")
+prefix_rule(pattern=["gh", "api"], decision="allow")
+prefix_rule(pattern=["gh", "pr", "create"], decision="allow")
 
 # --- Node.js ---
 prefix_rule(pattern=["npx", "prisma", "validate"], decision="allow")
