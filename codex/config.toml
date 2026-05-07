@@ -1,4 +1,4 @@
-model = "gpt-5.4"
+model = "gpt-5.5"
 approval_policy = "on-request"
 sandbox_mode = "workspace-write"
 model_reasoning_effort = "high"
@@ -13,12 +13,16 @@ web_search = "live"
 
 [features]
 apps = true
+goal = true
 multi_agent = true
 prevent_idle_sleep = true
 js_repl = true
+terminal_resize_reflow = true
+external_migration = true
 
 [sandbox_workspace_write]
 network_access = true
 
 [tui]
 status_line = ["model-with-reasoning", "current-dir", "git-branch", "context-remaining", "five-hour-limit"]
+terminal_title = ["spinner", "project", "status", "git-branch", "model", "task-progress"]
