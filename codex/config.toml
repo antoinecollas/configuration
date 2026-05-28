@@ -13,7 +13,7 @@ web_search = "live"
 
 [features]
 apps = true
-goal = true
+goals = true
 multi_agent = true
 prevent_idle_sleep = true
 js_repl = true

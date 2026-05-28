@@ -186,6 +186,7 @@ Notes:
 - Treesitter highlighting
 - LSP/completion via `mason.nvim`, `nvim-lspconfig`, `nvim-cmp`
 - Git tools (`gitsigns`, `vim-fugitive`, `diffview`)
+- Wrapped long lines with word-aware breaks
 - Markdown rendering and filetype-specific behavior
 
 `nvim/lazy-lock.json` pins plugin versions.

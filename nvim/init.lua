@@ -9,6 +9,8 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.opt.number = true
 vim.opt.scrolloff = 8
+vim.opt.wrap = true
+vim.opt.linebreak = true
 vim.opt.splitbelow, vim.opt.splitright = true, true -- New windows open bottom/right
 vim.opt.ignorecase, vim.opt.smartcase = true, true
 vim.opt.cursorline = true
