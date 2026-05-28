@@ -208,6 +208,22 @@ require("lazy").setup({
 -- Auto-close Quickfix with 'q'
 vim.api.nvim_create_autocmd("FileType", { pattern = "qf", command = "nnoremap <buffer> q <cmd>cclose<CR>" })
 
+-- Fugitive disables wrap in diff windows; restore it after diff windows are ready.
+local function wrap_diff_windows()
+  vim.schedule(function()
+    for _, win in ipairs(vim.api.nvim_list_wins()) do
+      if vim.api.nvim_win_is_valid(win) and vim.api.nvim_get_option_value("diff", { win = win }) then
+        vim.api.nvim_set_option_value("wrap", true, { win = win })
+        vim.api.nvim_set_option_value("linebreak", true, { win = win })
+      end
+    end
+  end)
+end
+
+vim.api.nvim_create_autocmd({ "BufWinEnter", "WinEnter", "DiffUpdated" }, {
+  callback = wrap_diff_windows,
+})
+
 -- Required settings for Markdown rendering
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "markdown",
