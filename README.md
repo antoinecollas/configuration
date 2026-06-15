@@ -68,6 +68,7 @@ Optional: `nvim`, Conda, Jupyter (`nbconvert`), `starship`, `zsh-autosuggestions
 - Loads host-specific additions from `~/.zshrc.local`.
 - Adds `~/configuration/scripts` to `PATH`.
 - Adds `~/configuration/remote_scripts` to `PATH`.
+- Defines alias: `gs` -> `git-spice`.
 - Defines aliases: `jzmount` -> `mount_jz.sh`, `jzumount` -> `umount_jz.sh`, `jzrsync` -> `rsync_jz.sh`.
 - Defines alias: `vmrsync` -> `vmrsync.sh`.
 - Includes helper functions: `open_notebook` (convert/open notebook PDF), `wt` (create worktree + launch codex), `wtrm` (remove worktree + local branch).
