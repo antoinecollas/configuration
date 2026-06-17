@@ -205,8 +205,18 @@ require("lazy").setup({
 
 -- === Autocmds ===
 
--- Auto-close Quickfix with 'q'
-vim.api.nvim_create_autocmd("FileType", { pattern = "qf", command = "nnoremap <buffer> q <cmd>cclose<CR>" })
+-- Quickfix/location lists: keep Enter usable even though <C-m> is mapped globally.
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "qf",
+  callback = function()
+    vim.keymap.set("n", "q", "<cmd>cclose<CR>", { buffer = true, silent = true })
+    vim.keymap.set("n", "<CR>", function()
+      local wininfo = vim.fn.getwininfo(vim.api.nvim_get_current_win())[1]
+      local command = wininfo and wininfo.loclist == 1 and "ll" or "cc"
+      vim.cmd(command .. " " .. vim.fn.line("."))
+    end, { buffer = true, silent = true, desc = "Open quickfix/location item" })
+  end,
+})
 
 -- Fugitive disables wrap in diff windows; restore it after diff windows are ready.
 local function wrap_diff_windows()
