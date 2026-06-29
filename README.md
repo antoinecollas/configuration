@@ -183,7 +183,7 @@ Notes:
 `nvim/init.lua` bootstraps `lazy.nvim` and configures:
 
 - UI/theme and editor defaults
-- Telescope search mappings, including scoped live grep via `<leader>sg`
+- Telescope search mappings, including scoped live grep via `<leader>sg` across hidden files and directories
 - Treesitter highlighting
 - LSP/completion via `mason.nvim`, `nvim-lspconfig`, `nvim-cmp`
 - Git tools (`gitsigns`, `vim-fugitive`, `diffview`)
@@ -206,6 +206,9 @@ In the live grep prompt, type a search term and press `<C-g>` to turn it into
 
 When a live grep result is opened, the prompt is remembered. The next
 `<leader>sg` starts with the same search text.
+
+`<leader>sg` also searches hidden files and directories. Ignored paths such as
+`.git`, `node_modules`, and `__pycache__` stay filtered from Telescope results.
 
 ## Codex setup
 

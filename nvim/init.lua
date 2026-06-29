@@ -66,6 +66,7 @@ require("lazy").setup({
         function()
           require("telescope").extensions.live_grep_args.live_grep_args({
             default_text = vim.g.last_live_grep_args,
+            hidden = true,
           })
         end,
         desc = "Live grep with args",
