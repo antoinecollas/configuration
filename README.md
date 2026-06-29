@@ -204,6 +204,9 @@ Scoped live grep examples:
 In the live grep prompt, type a search term and press `<C-g>` to turn it into
 `"search term" -g `. Then type the file glob.
 
+When a live grep result is opened, the prompt is remembered. The next
+`<leader>sg` starts with the same search text.
+
 ## Codex setup
 
 `codex/config.toml` defines runtime behavior such as:

@@ -61,7 +61,15 @@ require("lazy").setup({
     },
     keys = {
       { "<leader>sf", "<cmd>Telescope find_files<cr>" },
-      { "<leader>sg", "<cmd>Telescope live_grep_args<cr>", desc = "Live grep with args" },
+      {
+        "<leader>sg",
+        function()
+          require("telescope").extensions.live_grep_args.live_grep_args({
+            default_text = vim.g.last_live_grep_args,
+          })
+        end,
+        desc = "Live grep with args",
+      },
       { "<leader>sw", "<cmd>Telescope grep_string<cr>" },
       { "<leader>sb", "<cmd>Telescope buffers<cr>" },
     },
@@ -82,14 +90,33 @@ require("lazy").setup({
     },
     config = function(_, opts)
       local telescope = require("telescope")
+      local actions = require("telescope.actions")
+      local action_state = require("telescope.actions.state")
       local lga_actions = require("telescope-live-grep-args.actions")
+
+      local remember_live_grep_args = function(action)
+        return function(prompt_bufnr)
+          vim.g.last_live_grep_args = action_state.get_current_line()
+          action(prompt_bufnr)
+        end
+      end
 
       opts.extensions = opts.extensions or {}
       opts.extensions.live_grep_args = vim.tbl_deep_extend("force", opts.extensions.live_grep_args or {}, {
         mappings = {
           i = {
+            ["<CR>"] = remember_live_grep_args(actions.select_default),
+            ["<C-x>"] = remember_live_grep_args(actions.select_horizontal),
+            ["<C-v>"] = remember_live_grep_args(actions.select_vertical),
+            ["<C-t>"] = remember_live_grep_args(actions.select_tab),
             ["<C-q>"] = lga_actions.quote_prompt(),
             ["<C-g>"] = lga_actions.quote_prompt({ postfix = ' -g ' }),
+          },
+          n = {
+            ["<CR>"] = remember_live_grep_args(actions.select_default),
+            ["<C-x>"] = remember_live_grep_args(actions.select_horizontal),
+            ["<C-v>"] = remember_live_grep_args(actions.select_vertical),
+            ["<C-t>"] = remember_live_grep_args(actions.select_tab),
           },
         },
       })
