@@ -182,15 +182,27 @@ Notes:
 
 `nvim/init.lua` bootstraps `lazy.nvim` and configures:
 
-- UI/theme and navigation defaults
-- Telescope search mappings
+- UI/theme and editor defaults
+- Telescope search mappings, including scoped live grep via `<leader>sg`
 - Treesitter highlighting
 - LSP/completion via `mason.nvim`, `nvim-lspconfig`, `nvim-cmp`
 - Git tools (`gitsigns`, `vim-fugitive`, `diffview`)
+- Aerial outline pinned to the Neovim 0.11 compatibility branch
 - Wrapped long lines with word-aware breaks
 - Markdown rendering and filetype-specific behavior
 
 `nvim/lazy-lock.json` pins plugin versions.
+
+Scoped live grep examples:
+
+```text
+"TODO" -g "*.py"
+"TODO" -g "nvim/**"
+"TODO" -g "*.lua" -g "!lazy-lock.json"
+```
+
+In the live grep prompt, type a search term and press `<C-g>` to turn it into
+`"search term" -g `. Then type the file glob.
 
 ## Codex setup
 

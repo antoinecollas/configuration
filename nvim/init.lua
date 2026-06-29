@@ -42,12 +42,6 @@ vim.api.nvim_create_user_command("E", "Explore", {})
 -- Python Debugger Abbreviation (Type 'ipdb' + Space/Enter)
 vim.cmd("iabbrev ipdb import ipdb; ipdb.set_trace()")
 
--- Standard Window Navigation (Ctrl + h/j/k/l)
-vim.keymap.set("n", "<C-j>", "<C-w>h", { desc = "Window Left" })
-vim.keymap.set("n", "<C-l>", "<C-w>j", { desc = "Window Down" })
-vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Window Up" })
-vim.keymap.set("n", "<C-m>", "<C-w>l", { desc = "Window Right" })
-
 -- === Plugins ===
 require("lazy").setup({
   -- UI / Theme
@@ -60,10 +54,14 @@ require("lazy").setup({
 
   -- Search (Telescope)
   {
-    "nvim-telescope/telescope.nvim", dependencies = { "nvim-lua/plenary.nvim" },
+    "nvim-telescope/telescope.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      { "nvim-telescope/telescope-live-grep-args.nvim", version = "^1.0.0" },
+    },
     keys = {
       { "<leader>sf", "<cmd>Telescope find_files<cr>" },
-      { "<leader>sg", "<cmd>Telescope live_grep<cr>" },
+      { "<leader>sg", "<cmd>Telescope live_grep_args<cr>", desc = "Live grep with args" },
       { "<leader>sw", "<cmd>Telescope grep_string<cr>" },
       { "<leader>sb", "<cmd>Telescope buffers<cr>" },
     },
@@ -81,7 +79,24 @@ require("lazy").setup({
           }
         }
       }
-    }
+    },
+    config = function(_, opts)
+      local telescope = require("telescope")
+      local lga_actions = require("telescope-live-grep-args.actions")
+
+      opts.extensions = opts.extensions or {}
+      opts.extensions.live_grep_args = vim.tbl_deep_extend("force", opts.extensions.live_grep_args or {}, {
+        mappings = {
+          i = {
+            ["<C-q>"] = lga_actions.quote_prompt(),
+            ["<C-g>"] = lga_actions.quote_prompt({ postfix = ' -g ' }),
+          },
+        },
+      })
+
+      telescope.setup(opts)
+      telescope.load_extension("live_grep_args")
+    end,
   },
 
   -- Git
@@ -130,7 +145,7 @@ require("lazy").setup({
       { "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", desc = "Diagnostics (Trouble)" },
     }
   },
-  { "stevearc/aerial.nvim", opts = {} },
+  { "stevearc/aerial.nvim", branch = "nvim-0.11", opts = {} },
   { "github/copilot.vim" },
 
   -- LSP & Completion
@@ -153,7 +168,6 @@ require("lazy").setup({
         ensure_installed = servers,
       })
 
-      local lspconfig = require("lspconfig")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
       -- Global diagnostic config (makes errors look nicer)
@@ -185,11 +199,12 @@ require("lazy").setup({
 
         -- Specific fix for TypeScript "False Positives"
         if server == "ts_ls" then
-            opts.root_dir = lspconfig.util.root_pattern("tsconfig.json", "package.json", ".git")
+            opts.root_markers = { "tsconfig.json", "package.json", ".git" }
             opts.single_file_support = false -- Prevent it from running in single-file mode (which causes errors)
         end
 
-        lspconfig[server].setup(opts)
+        vim.lsp.config(server, opts)
+        vim.lsp.enable(server)
       end
 
       -- Completion (CMP)
@@ -204,19 +219,6 @@ require("lazy").setup({
 })
 
 -- === Autocmds ===
-
--- Quickfix/location lists: keep Enter usable even though <C-m> is mapped globally.
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "qf",
-  callback = function()
-    vim.keymap.set("n", "q", "<cmd>cclose<CR>", { buffer = true, silent = true })
-    vim.keymap.set("n", "<CR>", function()
-      local wininfo = vim.fn.getwininfo(vim.api.nvim_get_current_win())[1]
-      local command = wininfo and wininfo.loclist == 1 and "ll" or "cc"
-      vim.cmd(command .. " " .. vim.fn.line("."))
-    end, { buffer = true, silent = true, desc = "Open quickfix/location item" })
-  end,
-})
 
 -- Fugitive disables wrap in diff windows; restore it after diff windows are ready.
 local function wrap_diff_windows()
