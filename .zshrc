@@ -18,7 +18,6 @@ export OMP_NUM_THREADS=1
 
 # ll command
 alias ll='ls -alh'
-alias gs='git-spice'
 
 # Load host-specific additions
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
