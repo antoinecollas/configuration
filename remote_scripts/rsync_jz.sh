@@ -46,16 +46,32 @@ work="$(
 	ssh jz "bash -lc 'mkdir -p \"$dest\"'"
 
 	RSYNC_ARGS=(-a --info=progress2 --partial)
+	GIT_DIR=""
 
 	if [ -d "$src/.git" ]; then
-		echo "Git repository detected. Only syncing files tracked by git."
+		echo "Git repository detected. Syncing tracked files and Git metadata."
 		GIT_FILES_LIST=$(mktemp)
-		(cd "$src" && git ls-files) > "$GIT_FILES_LIST"
 		RSYNC_ARGS+=(--files-from="$GIT_FILES_LIST")
+		GIT_DIR="$src/.git"
 	fi
 
+	sync_once() {
+		if [ -n "${GIT_FILES_LIST:-}" ]; then
+			(cd "$src" && git ls-files) > "$GIT_FILES_LIST"
+		fi
+
+		rsync "${RSYNC_ARGS[@]}" "$src"/ "jz:${dest%/}/"
+
+		if [ -n "$GIT_DIR" ]; then
+			rsync -a --info=progress2 --partial --exclude='*.lock' \
+				"$GIT_DIR"/ "jz:${dest%/}/.git/"
+		fi
+	}
+
 	echo "Initial copy → jz:${dest%/}/"
-	rsync "${RSYNC_ARGS[@]}" "$src"/ "jz:${dest%/}/"
+	sync_once
 
 	echo "Watching $src → jz:${dest%/}/ (Ctrl-C to stop)"
-	fswatch -r -o -l "${JZ_FSWATCH_LATENCY:-1.0}" "$src" | xargs -n1 -I{} rsync "${RSYNC_ARGS[@]}" "$src"/ "jz:${dest%/}/"
+	while IFS= read -r _; do
+		sync_once
+	done < <(fswatch -r -o -l "${JZ_FSWATCH_LATENCY:-1.0}" "$src")
