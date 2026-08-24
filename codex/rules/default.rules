@@ -6,7 +6,6 @@ prefix_rule(pattern=["uv"], decision="allow")
 prefix_rule(pattern=["ruff"], decision="allow")
 prefix_rule(pattern=["pre-commit"], decision="allow")
 prefix_rule(pattern=["pytest"], decision="allow")
-prefix_rule(pattern=["python"], decision="allow")
 prefix_rule(pattern=["uv", "run"], decision="allow")
 
 # --- Git workflow (allow everything you listed) ---
@@ -42,7 +41,6 @@ prefix_rule(pattern=["gh", "pr", "create"], decision="allow")
 prefix_rule(pattern=["npx", "prisma", "validate"], decision="allow")
 prefix_rule(pattern=["npx", "prisma", "format"], decision="allow")
 prefix_rule(pattern=["npm", "install"], decision="allow")
-prefix_rule(pattern=["npm", "run"], decision="allow")
 
 # --- Docker ---
 prefix_rule(pattern=["docker", "run"], decision="allow")

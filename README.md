@@ -68,6 +68,7 @@ Optional: `nvim`, Conda, Jupyter (`nbconvert`), `starship`, `zsh-autosuggestions
 - Loads host-specific additions from `~/.zshrc.local`.
 - Adds `~/configuration/scripts` to `PATH`.
 - Adds `~/configuration/remote_scripts` to `PATH`.
+- Defines alias: `gs` -> `gh stack`.
 - Defines aliases: `jzmount` -> `mount_jz.sh`, `jzumount` -> `umount_jz.sh`, `jzrsync` -> `rsync_jz.sh`.
 - Defines alias: `vmrsync` -> `vmrsync.sh`.
 - Includes helper functions: `open_notebook` (convert/open notebook PDF), `wt` (create worktree + launch codex), `wtrm` (remove worktree + local branch).
@@ -136,6 +137,7 @@ Notes:
 
 - `rsync_jz.sh` syncs tracked Git files only when source is a Git repo.
 - Continuous mode uses `fswatch`; stop with `Ctrl-C`.
+- `jz_configuration/.zshrc` initializes modules from the active `MODULESHOME`, enables `zsh-autosuggestions`, and disables Oh My Zsh update checks on compute nodes.
 
 ## Remote scripts (VM workflow)
 

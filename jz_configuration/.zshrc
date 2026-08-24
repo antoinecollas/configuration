@@ -1,16 +1,17 @@
 # Load oh-my-zsh
 ZSH_THEME="robbyrussell"
+zstyle ':omz:update' mode disabled
 
-plugins=(git)
+plugins=(git zsh-autosuggestions)
 
 export ZSH="$HOME/.oh-my-zsh"
 source $ZSH/oh-my-zsh.sh
 
-# make module work
-
-# Source /usr/share/Modules/init/zsh if it exists
-if [[ -s "/usr/share/Modules/init/zsh" ]]; then
-  source /usr/share/Modules/init/zsh
+# Initialize Jean Zay environment modules
+if ! type module >/dev/null 2>&1; then
+  _module_home="${MODULESHOME:-$(bash -lc 'printf %s "$MODULESHOME"')}"
+  [[ -r "$_module_home/init/zsh" ]] && source "$_module_home/init/zsh"
+  unset _module_home
 fi
 
 # User configuration

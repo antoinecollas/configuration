@@ -1,4 +1,4 @@
-model = "gpt-5.5"
+model = "gpt-5.6-sol"
 approval_policy = "on-request"
 sandbox_mode = "workspace-write"
 model_reasoning_effort = "high"
@@ -16,7 +16,7 @@ apps = true
 goals = true
 multi_agent = true
 prevent_idle_sleep = true
-js_repl = true
+js_repl = false
 terminal_resize_reflow = true
 external_migration = true
 

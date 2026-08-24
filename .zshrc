@@ -18,6 +18,7 @@ export OMP_NUM_THREADS=1
 
 # ll command
 alias ll='ls -alh'
+alias gs='gh stack'
 
 # Load host-specific additions
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
