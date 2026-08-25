@@ -12,7 +12,6 @@ This repo is optimized for day-to-day reuse on macOS, with machine-specific over
 - [Remote scripts (Jean-Zay workflow)](#remote-scripts-jean-zay-workflow)
 - [Remote scripts (VM workflow)](#remote-scripts-vm-workflow)
 - [Neovim setup](#neovim-setup)
-- [Codex setup](#codex-setup)
 - [Troubleshooting](#troubleshooting)
 - [Usage note](#usage-note)
 
@@ -25,7 +24,6 @@ This repo is optimized for day-to-day reuse on macOS, with machine-specific over
 | `scripts/` | Small personal CLI helpers available from the shell. |
 | `remote_scripts/` | SSHFS mount/unmount and rsync helpers for remote cluster workflows. |
 | `nvim/` | Neovim config (`init.lua`) and lockfile (`lazy-lock.json`). |
-| `codex/` | Codex config, prompts, rules, AGENTS instructions, and reusable skills. |
 | `jz_configuration/` | Additional cluster shell startup files (`.bashrc`, `.bash_profile`, `.zshrc`). |
 | `starship.toml` | Starship prompt configuration. |
 | `generate_single_file.py` | Helper script that exports tracked source context into one Markdown file. |
@@ -211,16 +209,6 @@ When a live grep result is opened, the prompt is remembered. The next
 
 `<leader>sg` also searches hidden files and directories. Ignored paths such as
 `.git`, `node_modules`, and `__pycache__` stay filtered from Telescope results.
-
-## Codex setup
-
-`codex/config.toml` defines runtime behavior such as:
-
-- model and reasoning level
-- approval policy / sandbox mode
-- enabled features (apps, multi-agent)
-
-`codex/AGENTS.md` and `codex/skills/` contain reusable instructions and automation workflows used by Codex agents.
 
 ## Troubleshooting
 

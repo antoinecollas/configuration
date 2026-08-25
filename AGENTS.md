@@ -8,7 +8,6 @@ This repository is a personal configuration monorepo (no `src/` app layout).
 - `.zshrc.local`: machine-specific overrides (kept local, not for shared defaults).
 - `remote_scripts/`: Bash helpers for mounting, unmounting, and syncing remote cluster directories.
 - `nvim/`: Neovim config (`init.lua`) and plugin lockfile (`lazy-lock.json`).
-- `codex/`: Codex settings, prompts, rules, and skills.
 - `jz_configuration/`: alternate shell startup files for cluster environments.
 - `generate_single_file.py`: utility to export tracked repo context into one Markdown file.
 
