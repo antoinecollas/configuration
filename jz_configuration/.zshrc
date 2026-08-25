@@ -34,3 +34,9 @@ alias ll='ls -alh'
 
 # Add $HOME/.local/bin to PATH
 export PATH="$HOME/.local/bin:$PATH"
+
+# Use the Git installation shared with compute nodes
+if [[ -d "$HOME/.local/libexec/git-core" ]]; then
+  export GIT_EXEC_PATH="$HOME/.local/libexec/git-core"
+  export GIT_TEMPLATE_DIR="$HOME/.local/share/git-core/templates"
+fi
