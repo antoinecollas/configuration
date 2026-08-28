@@ -67,7 +67,7 @@ Optional: `nvim`, Conda, Jupyter (`nbconvert`), `starship`, `zsh-autosuggestions
 - Adds `~/configuration/scripts` to `PATH`.
 - Adds `~/configuration/remote_scripts` to `PATH`.
 - Defines alias: `gs` -> `gh stack`.
-- Defines aliases: `jzmount` -> `mount_jz.sh`, `jzumount` -> `umount_jz.sh`, `jzrsync` -> `rsync_jz.sh`.
+- Defines aliases: `jzmount` -> `mount_jz.sh`, `jzumount` -> `umount_jz.sh`, `jzrsync` -> `rsync_jz.sh`, `jzstart` -> `start_jz.sh`.
 - Defines alias: `vmrsync` -> `vmrsync.sh`.
 - Includes helper functions: `open_notebook` (convert/open notebook PDF), `wt` (create worktree + launch codex), `wtrm` (remove worktree + local branch).
 - Includes the conda initialization block managed by `conda init`.
@@ -117,6 +117,7 @@ Files:
 - `remote_scripts/mount_jz.sh`: mounts remote directories locally
 - `remote_scripts/umount_jz.sh`: unmounts those local mount points
 - `remote_scripts/rsync_jz.sh`: one-way local -> remote sync, then continuous watch/sync
+- `remote_scripts/start_jz.sh`: opens the SSH master connection, refreshes mounts, then starts synchronization
 
 Expected setup:
 
@@ -129,6 +130,15 @@ Typical usage:
 jzmount
 jzumount
 jzrsync ~/path/to/project <remote-subpath-under-work>
+jzstart ~/path/to/project
+```
+
+`jzstart` derives the remote subpath from the local path relative to `$HOME`.
+For example, `jzstart ~/projects/example` synchronizes to
+`$WORK/projects/example`. Pass a second argument to override it:
+
+```bash
+jzstart ~/projects/example custom/remote-path
 ```
 
 Notes:
@@ -213,7 +223,7 @@ When a live grep result is opened, the prompt is remembered. The next
 
 ## Troubleshooting
 
-`jzmount`/`jzrsync`/`vmrsync` fails:
+`jzstart`/`jzmount`/`jzrsync`/`vmrsync` fails:
 
 - Verify SSH access works: `ssh <ssh-alias>` or `ssh <ip-or-host>`
 - Verify required tools: `command -v sshfs fswatch rsync`
