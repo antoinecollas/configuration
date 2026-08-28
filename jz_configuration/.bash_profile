@@ -8,7 +8,7 @@ if [[ -z "${WORK:-}" ]]; then
 fi
 
 # User tools installed in HOME or WORK, plus zsh.
-export PATH="$WORK/.local/bin:$HOME/.local/bin:$HOME/.local/zsh-5.9/bin:$PATH"
+export PATH="$HOME/.local/bin:$WORK/.local/bin:$HOME/.local/zsh-5.9/bin:$PATH"
 
 # load zsh
 # start zsh only for interactive shells
