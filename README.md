@@ -136,6 +136,7 @@ Notes:
 - `rsync_jz.sh` syncs tracked files and `.git` metadata when the source is a Git repository.
 - Synchronization remains one-way and does not delete remote files; treat the local repository as the source of truth.
 - Continuous mode uses `fswatch`; stop with `Ctrl-C`.
+- `jz_configuration/.bash_profile` exposes tools installed under `$HOME/.local/bin` or `$WORK/.local/bin`, including for non-interactive SSH commands.
 - `jz_configuration/.zshrc` initializes modules, enables `zsh-autosuggestions`, disables Oh My Zsh update checks, and exposes a shared `~/.local` Git installation on compute nodes.
 
 ## Remote scripts (VM workflow)
