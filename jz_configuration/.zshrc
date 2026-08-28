@@ -24,6 +24,12 @@ export OMP_NUM_THREADS=1
 
 export TORCHINDUCTOR_CACHE_DIR=$WORK/torchinductor_cache
 
+# Store uv caches and project environments on Jean Zay's fast scratch storage
+if [[ -n "${SCRATCH:-}" ]]; then
+  export UV_CACHE_DIR="${SCRATCH}/uv-cache"
+  export UV_PREVIEW_FEATURES="centralized-project-envs"
+fi
+
 # ll command
 alias ll='ls -alh'
 
