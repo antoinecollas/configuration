@@ -193,7 +193,7 @@ Notes:
 
 `nvim/init.lua` bootstraps `lazy.nvim` and configures:
 
-- UI/theme and editor defaults
+- UI/theme and editor defaults, including a vertically centered cursor when possible
 - Telescope search mappings, including scoped live grep via `<leader>sg` across hidden files and directories
 - Treesitter highlighting
 - LSP/completion via `mason.nvim`, `nvim-lspconfig`, `nvim-cmp`

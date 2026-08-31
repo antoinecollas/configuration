@@ -8,7 +8,7 @@ vim.opt.rtp:prepend(lazypath)
 -- === General Settings ===
 vim.g.mapleader = " "
 vim.opt.number = true
-vim.opt.scrolloff = 8
+vim.opt.scrolloff = 999 -- Keep the cursor vertically centered when possible
 vim.opt.wrap = true
 vim.opt.linebreak = true
 vim.opt.splitbelow, vim.opt.splitright = true, true -- New windows open bottom/right
