@@ -149,7 +149,7 @@ Notes:
 - Synchronization remains one-way and does not delete remote files; treat the local repository as the source of truth.
 - Continuous mode uses `fswatch`; stop with `Ctrl-C`.
 - `jz_configuration/.bash_profile` exposes tools installed under `$HOME/.local/bin` or `$WORK/.local/bin`, including for non-interactive SSH commands.
-- `jz_configuration/.zshrc` initializes modules, enables `zsh-autosuggestions`, disables Oh My Zsh update checks, exposes a shared `~/.local` Git installation on compute nodes, and stores uv caches and centralized project environments under `$SCRATCH/uv-cache`.
+- `jz_configuration/.zshrc` initializes modules, enables `zsh-autosuggestions`, disables Oh My Zsh update checks, enables offline mode for Hugging Face libraries, exposes a shared `~/.local` Git installation on compute nodes, and stores uv caches and centralized project environments under `$SCRATCH/uv-cache`.
 
 ## Remote scripts (VM workflow)
 
