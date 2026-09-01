@@ -20,6 +20,7 @@ This repo is optimized for day-to-day reuse on macOS, with machine-specific over
 | Path | Purpose |
 | --- | --- |
 | `.zshrc` | Main Zsh config (aliases, prompt, helper functions, conda init, and tool PATHs). |
+| `.tmux.conf` | Tmux configuration with mouse support enabled. |
 | `.zshrc.local.example` | Template for local machine overrides. |
 | `scripts/` | Small personal CLI helpers available from the shell. |
 | `remote_scripts/` | SSHFS mount/unmount and rsync helpers for remote cluster workflows. |
@@ -39,6 +40,7 @@ Example symlink setup:
 
 ```bash
 ln -sf ~/configuration/.zshrc ~/.zshrc
+ln -sf ~/configuration/.tmux.conf ~/.tmux.conf
 
 mkdir -p ~/.config/nvim
 ln -sf ~/configuration/nvim/init.lua ~/.config/nvim/init.lua
