@@ -23,6 +23,7 @@ This repo is optimized for day-to-day reuse on macOS, with machine-specific over
 | `.tmux.conf` | Tmux configuration with mouse support enabled. |
 | `.zshrc.local.example` | Template for local machine overrides. |
 | `scripts/` | Small personal CLI helpers available from the shell. |
+| `skills/` | Personal Codex skills, symlinked into `~/.codex/skills`. |
 | `remote_scripts/` | SSHFS mount/unmount and rsync helpers for remote cluster workflows. |
 | `nvim/` | Neovim config (`init.lua`) and lockfile (`lazy-lock.json`). |
 | `jz_configuration/` | Additional cluster shell startup files (`.bashrc`, `.bash_profile`, `.zshrc`). |
@@ -145,11 +146,41 @@ jzstart ~/projects/example custom/remote-path
 
 Notes:
 
+- Logs primarily serve Codex and other agents. Lifecycle lines use stable
+  `event=` and `stage=` fields on stderr; paths use Bash `%q` escaping.
+  Other command output can still appear alongside these lines.
+- Three short startup lines summarize SSH, SSHFS, rsync/fswatch, and how to
+  use the running sync. One scope line explains which files are copied,
+  including uncommitted edits in Git mode and the full-tree fallback.
+  Detailed guidance lives in the Jean Zay sync skill.
+- `event=initial_sync_complete` means the first copy succeeded. `event=handoff`
+  only means setup is handing control to the sync helper. `event=watch_start`
+  announces watcher startup, not a health check. Silence while watching is normal.
+- Failure events identify the stage and exit code. Authentication and sudo fields
+  indicate possible user interaction, not proof that a prompt is active.
 - `rsync_jz.sh` syncs tracked files and `.git` metadata when the source is a Git repository.
 - Synchronization remains one-way and does not delete remote files; treat the local repository as the source of truth.
 - Continuous mode uses `fswatch`; stop with `Ctrl-C`.
 - `jz_configuration/.bash_profile` exposes tools installed under `$HOME/.local/bin` or `$WORK/.local/bin`, including for non-interactive SSH commands.
 - `jz_configuration/.zshrc` initializes modules, enables `zsh-autosuggestions`, disables Oh My Zsh update checks, enables offline mode for Hugging Face libraries, exposes a shared `~/.local` Git installation on compute nodes, and stores uv caches and centralized project environments under `$SCRATCH/uv-cache`.
+
+### Codex discovery across projects
+
+The [Jean Zay sync skill](skills/jean-zay-sync/SKILL.md) lives in this repository. Its
+name and description associate Jean Zay, JZ, and `jzstart` with the existing
+workflow; the full instructions load when the skill is selected.
+
+Install it for all projects with a directory symlink:
+
+```bash
+mkdir -p ~/.codex/skills
+ln -s ~/configuration/skills/jean-zay-sync ~/.codex/skills/jean-zay-sync
+```
+
+Start a new Codex session after installation. You can also invoke `$jean-zay-sync`
+explicitly. Edit the file in this repository; the symlink uses the same source.
+The previous Jean Zay section in global `~/.codex/AGENTS.md` is no longer needed.
+Startup logs still explain the workflow independently of the skill.
 
 ## Remote scripts (VM workflow)
 
