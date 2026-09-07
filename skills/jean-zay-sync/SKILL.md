@@ -1,101 +1,70 @@
 ---
 name: jean-zay-sync
-description: Sync a local checkout with Jean Zay using jzsync and Mutagen, keep remote outputs returning automatically, and troubleshoot sync sessions. Use for Jean Zay code transfers, sync-and-run tasks, output downloads, or SSHFS access; use project instructions for job submission.
+description: Copy local code to Jean Zay with jzsync (one-way rsync), optionally watch local changes with fswatch, and retrieve selected remote results. Use for Jean Zay code transfers and sync-and-run tasks; use project instructions for job submission.
 ---
 
 # Jean Zay sync
 
-Use `jzsync` to keep local code and remote outputs synchronized over SSH.
-It starts or resumes a persistent Mutagen project, flushes changes, and prints
-status. Remote GitHub access is not required.
+Use `jzsync` to copy local code to Jean Zay over SSH. For a Codex sync-and-run
+task, make one transfer and wait for it to finish:
 
-## Sync the checkout
+```bash
+jzsync --once <local-checkout> <relative-path-under-remote-WORK>
+```
 
-Choose the local checkout and remote destination from the task and project
-instructions. Inspect local Git status before starting, since remote changes can
-return locally. Use a standalone clone: linked worktrees and submodules with a
-`.git` file are unsupported.
+The command is on PATH; otherwise use `~/configuration/scripts/jzsync`.
+Choose the checkout and destination from the task and project instructions.
+With no path arguments, it uses the current directory and its path relative to
+HOME under remote WORK. Paths outside HOME need an explicit remote subpath.
+It reuses or opens an SSH master; remote GitHub access is not needed.
+
+## Copy, then run
+
+Inspect local changes, run `jzsync --once`, and wait for exit code 0 and
+`[jz] Sync complete.` before submitting jobs. On failure, fix the reported SSH,
+path, or rsync error and retry. If the execution sandbox blocks the command,
+request the required execution approval and retry the same command.
+
+Git checkouts copy tracked files with their current local contents, including
+uncommitted edits. New files must be staged with `git add` to be included.
+The file list is rebuilt on each transfer. Linked worktrees are supported;
+submodule contents are not copied automatically. Non-Git directories copy all
+files except the exclusions below.
+
+`.git`, `.cache`, `data`, `.venv`, `__pycache__`, `.DS_Store`, `.env`, and `.env.*`
+are excluded. Remote files with matching included paths are overwritten, but
+remote files are never deleted. Renamed or deleted local files can therefore
+leave stale remote files. Use a fresh destination when an exact file set matters.
+Git metadata is not copied: verify relevant file contents when needed, rather
+than expecting remote HEAD or Git status to match.
+
+Continue with the target project's environment, cache, and job instructions.
+`jzsync` does not submit jobs. Independent checkouts need disjoint destinations.
+
+## Watch while editing
+
+Omit `--once` for an initial copy followed by an `fswatch` loop:
 
 ```bash
 jzsync <local-checkout> <relative-path-under-remote-WORK>
 ```
 
-The command is an executable on PATH. If unavailable, use
-`~/configuration/scripts/jzsync`. With no arguments it uses the current directory
-and its path relative to HOME under remote WORK. For example,
-`jzsync ~/projects/example` targets `$WORK/projects/example` on Jean Zay.
-Paths outside HOME need an explicit remote subpath.
+Keep it running in a terminal or managed execution session. Each successful
+transfer prints `Sync complete.`; errors stop the command. Stop the watcher with
+Ctrl-C. It is a foreground process, with no daemon or project state. Use one
+watcher per destination, and stop it before changing the branch being executed.
+`JZ_FSWATCH_LATENCY` sets batching latency (default: 1 second).
 
-Run the command even when no Mutagen sessions exist; it creates the project.
-Remote untracked files are normal and eligible files return locally. Matching
-Git commits do not replace working-file and output synchronization.
+## Retrieve results
 
-Save the resolved destination and project-file path printed by `jzsync`.
-The project file lives under `~/.cache/jean-zay-sync`. Use that exact file for
-later operations, rather than a session display name that may be shared.
+Results stay on Jean Zay. Use `scp` or a separate remote-to-local `rsync` command
+to download the specific files requested by the user. Use a local results folder
+to avoid overwriting source files. Remote caches and data remain in place.
+For live browsing, use `mount_jz.sh` (`jzmount`); do not unmount shared paths as
+routine cleanup.
 
-## Verify, then run
+## Setup
 
-Inspect the status printed by `jzsync`. Resolve conflicts or scan errors before
-running code. A successful flush alone does not establish that all files match.
-For Git checkouts, compare HEAD and working-tree status on both sides; inspect
-diffs or hashes when needed to verify uncommitted code.
-
-For later edits or a final check before submitting jobs:
-
-```bash
-mutagen project flush -f <project-file>
-mutagen project list -f <project-file>
-```
-
-When the user also requested execution, continue with the target project's
-instructions for the environment, feature caches, resources, and job submission.
-`jzsync` submits no jobs. Prepare missing caches on the cluster and export desired
-results outside excluded directories so they can return automatically.
-
-Leave synchronization running when the task ends. Sessions survive terminal and
-Codex exit. The remote endpoint polls every second to discover compute-node
-outputs on the shared filesystem. Keep the SSH master open for shared sessions
-and later remote commands.
-
-## Understand what can change
-
-The policy is `two-way-safe`: files and nonconflicting edits or deletions can
-propagate in either direction. Edit code locally and inspect conflicting versions
-before resolving them. Do not clear conflicts with a forced reset or replica mode.
-`.gitignore` is deliberately not used, so untracked plots and logs can sync.
-
-Regular checkouts include `.git` in the same session as the working tree.
-Avoid simultaneous Git writes on both sides; flush and inspect status before
-switching sides. File synchronization is not an atomic Git operation.
-
-The shared policy excludes `.cache`, `data`, `.venv`, `__pycache__`, `.DS_Store`,
-`.env`, `.env.*`, Git lock files, `.git/worktrees`, and `.git/config.worktree`.
-Excluded paths, including remote cache/data symlinks, stay untouched. Keep these
-exclusions; copy selected results to an included output directory instead.
-
-Reuse the existing project for the same endpoints. Independent agents need
-separate clones and disjoint remote directories. The wrapper does not prevent
-parent/child overlaps or sessions started on another machine.
-
-## Troubleshoot only when needed
-
-Read `~/configuration/scripts/jzsync` and
-`~/configuration/remote_scripts/mutagen.yml` when diagnosing a failure.
-
-| Symptom | Next action |
-| --- | --- |
-| Mutagen is missing | Install with `brew install mutagen-io/mutagen/mutagen`. |
-| SSH authentication is needed | Let `jzsync` open its SSH master with `ssh -MNf jz`; complete interactive authentication if required. |
-| Remote WORK cannot be resolved | Check that the remote login shell exposes an absolute `WORK` and provides `realpath`. |
-| Exit 75: source or policy mismatch | Inspect the printed project file and its endpoints. Reuse the intended source or choose a disjoint destination; do not overwrite the pinned configuration. |
-| Session is paused | Run `mutagen project resume -f <project-file>`, then flush and inspect status. |
-| Conflicts or scan errors | Inspect the affected paths and versions, fix the cause, then flush and check again. |
-
-Diagnose an actual `jzsync` failure before choosing another transfer method,
-unless the user requested one. A Git pull or bundle alone does not keep outputs
-returning automatically. Do not create duplicate manual sessions or terminate
-shared projects as routine cleanup.
-
-For live remote browsing, use `mount_jz.sh` (shell alias `jzmount`). SSHFS is
-independent of Mutagen. Do not unmount shared paths as routine cleanup.
+Install local tools with `brew install rsync fswatch`. Both endpoints need rsync
+with `--protect-args` support; the remote login shell must expose an absolute
+`WORK` and provide `realpath`. `--once` does not require fswatch.

@@ -57,7 +57,7 @@ cp ~/configuration/.zshrc.local.example ~/.zshrc.local
 
 Required: `zsh`, `git`, `ssh`, `rsync`.
 
-For Jean Zay sync: `mutagen`. For mounting: `sshfs`. The VM sync helper uses `fswatch`.
+For continuous Jean Zay and VM sync: `fswatch`. For mounting: `sshfs`.
 
 Optional: `nvim`, Conda, Jupyter (`nbconvert`), `starship`, `zsh-autosuggestions`.
 
@@ -116,113 +116,50 @@ Use `build_database_url --help` to see the built-in helper text.
 
 ## Remote scripts (Jean-Zay workflow)
 
-Edit locally, run code on Jean Zay, and receive remote outputs automatically.
-[Mutagen](https://mutagen.io/documentation/introduction/getting-started/) manages
-persistent background synchronization; SSHFS is a separate tool for browsing.
+`jzsync` copies local code to Jean Zay with rsync, then watches local changes
+with fswatch. Use `--once` to copy and exit before submitting jobs.
 
 ```bash
-brew install mutagen-io/mutagen/mutagen
-jzsync ~/projects/example
-# Optional: override the destination under remote WORK.
+brew install rsync fswatch
+jzsync --once ~/projects/example
 jzsync ~/projects/example projects/example-agent-a
 ```
 
-`jzsync` defaults to the current directory and derives the remote subpath from
-its path relative to HOME. Paths outside HOME require an explicit subpath.
-`jzsync` reuses an existing SSH master or opens one with `ssh -MNf jz`, using
-your SSH configuration. This can prompt for authentication. The master remains
-available for later Codex commands and Mutagen connections. The
-remote shell must expose WORK and provide `realpath`; Mutagen installs its own
-remote agent over SSH.
+The local directory defaults to the current directory. The destination defaults
+to its path relative to HOME under remote WORK. Paths outside HOME need an
+explicit subpath. The command reuses or opens an SSH master; the remote login
+shell must expose WORK and provide `realpath`. Both endpoints need rsync with
+`--protect-args` support.
 
-The implementation is small:
+Git checkouts copy tracked files, including local edits. Stage new files with
+`git add` to include them. The file list is refreshed on each transfer. Linked
+worktrees are supported; submodule contents are not copied automatically.
+Non-Git directories copy all files except `.git`, `.cache`, `data`, `.venv`,
+`__pycache__`, `.DS_Store`, `.env`, and `.env.*`. These exclusions also apply to
+Git checkouts.
 
-- `scripts/jzsync`: resolve endpoints, create or resume a Mutagen project,
-  flush pending changes, and show status. Numbered comments explain each step.
-- `remote_scripts/mutagen.yml`: shared synchronization policy.
-- `remote_scripts/mount_jz.sh` / `umount_jz.sh`: explicit SSHFS mount management.
+Transfers overwrite matching files but never delete remote files. Local deletions
+and renames can leave stale remote files; use a fresh destination when needed.
+Git metadata stays local. Results stay remote; download selected files with
+`scp` or a separate rsync command.
 
-### What synchronizes
+Wait for `Sync complete.` and exit code 0 from `--once` before launching jobs.
+Watch mode stays in the foreground until Ctrl-C; errors stop the command.
+`JZ_FSWATCH_LATENCY` sets batching latency (default: 1 second).
+Use one watcher per destination and disjoint destinations for separate checkouts.
 
-The policy uses **two-way-safe**: local code goes out and remote outputs come back,
-including new files that are not tracked by Git. It does not use `.gitignore`,
-which often excludes desired outputs such as PNGs, figures, and logs.
+Use `jzmount` / `jzumount` for optional SSHFS browsing. Avoid unmounting paths
+used by another process.
 
-The session excludes `.cache`, `data`, `.git/**/*.lock`, `.venv`,
-`__pycache__`, `.DS_Store`, `.env`, and `.env.*` at every level. Excluded paths
-are neither copied nor deleted by that session. Outputs saved under `.cache` stay remote; export selected results
-outside that directory to synchronize them.
-
-This replaces the old tracked-files-only, one-way rsync behavior. Nonconflicting
-remote code edits and deletions can also propagate back. Conflicting edits are
-reported for resolution, not automatically overwritten.
-
-For regular Git checkouts, `.git` synchronizes in both directions in the same
-session as code and outputs. HEAD, refs, objects, and the index are included;
-Git lock files and machine-specific `.git/worktrees` and `.git/config.worktree`
-records are excluded. Existing remote symlinks under excluded directories
-(`data`, `.cache`, `.venv`) are preserved.
-Avoid simultaneous Git writes on both sides, and
-flush before switching sides. File synchronization is not an atomic Git operation;
-concurrent changes can cause metadata conflicts. Linked worktrees and submodules
-with a `.git` file are rejected; use a standalone clone.
-
-After flushing, inspect Mutagen status and compare `git rev-parse HEAD` and
-`git status --short` on both sides. Matching HEAD alone does not prove that
-uncommitted working-tree contents match; inspect diffs or file hashes as needed.
-See [Mutagen sync modes](https://mutagen.io/documentation/synchronization/) and
-[ignore rules](https://mutagen.io/documentation/synchronization/ignores/).
-
-The remote endpoint polls every 1 second so files written by compute nodes can
-be discovered through the shared filesystem. Use `flush` before submitting a job,
-and inspect status for conflicts or scan errors.
-
-### Sessions and parallel agents
-
-The command prints the project file under `~/.cache/jean-zay-sync`. Manage that
-specific project with:
-
-```bash
-mutagen project list -f <project-file>
-mutagen project flush -f <project-file>
-mutagen project pause -f <project-file>
-mutagen project resume -f <project-file>
-mutagen project terminate -f <project-file>
-```
-
-Sessions survive the terminal or Codex session closing. Do not terminate a shared
-project as routine agent cleanup. Multiple agents using the same local checkout
-and remote destination share one Mutagen project. An atomic configuration file
-pins each resolved remote destination to one local source and policy; a mismatch
-exits with code 75. Mutagen's project lock prevents duplicate project starts.
-
-Independent agents need separate checkouts and **disjoint remote directories**.
-Parent/child destination overlaps are not automatically blocked by this wrapper.
-Different machines and manually created Mutagen sessions also need coordination.
-Use project files or session IDs for management; session display names can repeat.
-
-Policy changes apply to new sessions. To change an existing policy, inspect and
-terminate the affected project, then remove its generated YAML file and rerun
-`jzsync`. Do not remove active project lock files.
-
-### SSHFS and Codex
-
-Use `jzmount` only when live remote filesystem access is useful; `jzsync` does not
-mount or unmount anything. Writes through SSHFS change remote files directly.
-Avoid `jzumount` while another agent uses those mounts.
-
-The [Jean Zay sync skill](skills/jean-zay-sync/SKILL.md) is tracked here and installed
-for all projects through a symlink:
+The [Jean Zay sync skill](skills/jean-zay-sync/SKILL.md) is installed through a symlink:
 
 ```bash
 mkdir -p ~/.codex/skills
 ln -s ~/configuration/skills/jean-zay-sync ~/.codex/skills/jean-zay-sync
 ```
 
-Use `$jean-zay-sync` or mention Jean Zay. Edit the skill here; the symlink reads the
-same file. Project-specific values and generated Mutagen state stay local.
-The skill covers sync, verification, and troubleshooting; job submission follows
-the target project's instructions.
+Use `$jean-zay-sync` or mention Jean Zay. Job submission follows the target
+project's instructions.
 
 ## Remote scripts (VM workflow)
 
