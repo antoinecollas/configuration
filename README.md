@@ -159,7 +159,10 @@ reported for resolution, not automatically overwritten.
 
 For regular Git checkouts, `.git` synchronizes in both directions in the same
 session as code and outputs. HEAD, refs, objects, and the index are included;
-Git lock files are excluded. Avoid simultaneous Git writes on both sides, and
+Git lock files and machine-specific `.git/worktrees` and `.git/config.worktree`
+records are excluded. Existing remote symlinks under excluded directories
+(`data`, `.cache`, `.venv`) are preserved.
+Avoid simultaneous Git writes on both sides, and
 flush before switching sides. File synchronization is not an atomic Git operation;
 concurrent changes can cause metadata conflicts. Linked worktrees and submodules
 with a `.git` file are rejected; use a standalone clone.

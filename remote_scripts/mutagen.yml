@@ -6,6 +6,9 @@ sync:
       vcs: false
       paths:
         - '.git/**/*.lock'
+        # Linked-worktree records contain machine-specific paths.
+        - .git/worktrees
+        - .git/config.worktree
         - .cache
         - data
         - .venv
