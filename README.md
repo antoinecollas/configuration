@@ -221,6 +221,8 @@ ln -s ~/configuration/skills/jean-zay-sync ~/.codex/skills/jean-zay-sync
 
 Use `$jean-zay-sync` or mention Jean Zay. Edit the skill here; the symlink reads the
 same file. Project-specific values and generated Mutagen state stay local.
+The skill covers sync, verification, and troubleshooting; job submission follows
+the target project's instructions.
 
 ## Remote scripts (VM workflow)
 
