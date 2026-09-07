@@ -1,0 +1,19 @@
+# Shared policy. scripts/jzsync appends the local and remote endpoints.
+sync:
+  code-and-outputs:
+    mode: two-way-safe
+    ignore:
+      vcs: false
+      paths:
+        - '.git/**/*.lock'
+        - .cache
+        - data
+        - .venv
+        - __pycache__
+        - .DS_Store
+        - .env
+        - .env.*
+    configurationBeta:
+      watch:
+        mode: force-poll
+        pollingInterval: 1

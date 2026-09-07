@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# 1. Handle help and check prerequisites before connecting to the cluster.
+if [[ "${1:-}" == -h || "${1:-}" == --help ]]; then
+    cat <<'HELP'
+Usage: jzsync [LOCAL_DIR] [SUBPATH_UNDER_WORK]
+
+Start or resume background code/output synchronization with Jean Zay.
+LOCAL_DIR defaults to the current directory; the remote subpath defaults to
+its path relative to HOME. .cache, data, and environments are excluded.
+For regular Git checkouts, .git synchronizes in both directions.
+SSHFS is independent: use jzmount when you need to browse remote files.
+HELP
+    exit 0
+fi
+[[ $# -le 2 ]] || { echo 'Usage: jzsync [LOCAL_DIR] [SUBPATH_UNDER_WORK]' >&2; exit 2; }
+command -v mutagen >/dev/null || { echo 'Install Mutagen: brew install mutagen-io/mutagen/mutagen' >&2; exit 1; }
+
+# 2. Resolve the local checkout and derive its relative path under remote WORK.
+source_dir=$(cd "${1:-.}" && pwd -P)
+# A .git file points elsewhere on this machine and would not work remotely.
+if [[ -f "$source_dir/.git" ]]; then
+    echo 'Git worktrees/submodules with a .git file are unsupported; use a standalone clone.' >&2
+    exit 2
+fi
+subpath=${2-${source_dir#"$HOME"/}}
+case "/$subpath/" in
+    *'/../'*|*'/./'*|*'//'*) echo 'Provide a non-empty relative subpath without . or .. components.' >&2; exit 2 ;;
+esac
+[[ "$subpath" != /* && "$source_dir" != *$'\n'* ]] || { echo 'Provide a relative remote subpath; newline paths are unsupported.' >&2; exit 2; }
+
+# 3. Reuse or open a persistent SSH master, then resolve the remote destination.
+script_dir=$(cd "$(dirname "$0")/../remote_scripts" && pwd -P)
+# Keep the master alive for Mutagen and later agent commands. Authentication
+# may prompt when opening it; routine sync cleanup must not close it.
+if ssh -O check jz >/dev/null 2>&1; then
+    echo '[jz] Reusing SSH master connection.'
+else
+    echo '[jz] Opening SSH master connection; authentication may be required.'
+    ssh -MNf jz
+fi
+# Resolve remote symlinks so equivalent paths share one project. The marker
+# separates the result from login messages; %q quotes arguments for Bash.
+printf -v remote_command '[[ "$WORK" == /* ]] || exit 1; printf "__JZ__"; realpath -m -- "$WORK"/%q' "$subpath"
+printf -v remote_command 'bash -lc %q' "$remote_command"
+remote_dir=$(ssh jz "$remote_command" | sed -n 's/^__JZ__//p')
+[[ "$remote_dir" == /* && "$remote_dir" != *$'\n'* ]] || { echo 'Could not resolve remote WORK.' >&2; exit 1; }
+
+# 4. Give each remote destination a stable local project file. Hashing keeps
+# remote path characters out of the filename. Mutagen owns the session lock.
+key=$(printf '%s' "$remote_dir" | shasum -a 256 | cut -d ' ' -f 1)
+state_dir="$HOME/.cache/jean-zay-sync"
+mkdir -p "$state_dir"
+project="$state_dir/$key.yml"
+
+# 5. Combine the shared policy with these endpoints in a temporary YAML file.
+# The exit trap removes only this temporary file, not the persistent project.
+tmp=$(mktemp "$state_dir/project.XXXXXX")
+trap 'rm -f "$tmp"' EXIT
+cat "$script_dir/mutagen.yml" > "$tmp"
+# YAML single quotes are escaped by doubling them.
+printf "    alpha: '%s'\n    beta: 'jz:%s'\n" "${source_dir//\'/\'\'}" "${remote_dir//\'/\'\'}" >> "$tmp"
+
+# Publish without overwriting: creating the hard link is atomic. If another
+# invocation already created the project, accept only an identical configuration.
+if ! ln "$tmp" "$project" 2>/dev/null && ! cmp -s "$tmp" "$project"; then
+    echo "[jz] Destination already has a different source or policy. Inspect: $project" >&2
+    exit 75
+fi
+
+printf '[jz] %s <-> %s\n' "$source_dir" "$remote_dir"
+echo '[jz] Code out, outputs back. Excludes .cache/data; .git syncs both ways.'
+# 6. Reuse the project when present; otherwise create it using only our policy.
+# Mutagen runs synchronization in its daemon, so this shell can exit afterward.
+if [[ -s "$project.lock" ]]; then
+    mutagen project resume -f "$project"
+else
+    mutagen project start --no-global-configuration -f "$project"
+fi
+
+# 7. Request a full sync cycle, then show status. Inspect conflicts and errors:
+# a successful flush alone does not mean every file is synchronized.
+mutagen project flush -f "$project"
+mutagen project list -f "$project"
+printf '[jz] Session runs in the background; check status above. Manage with: mutagen project <list|flush|pause|terminate> -f %q\n' "$project"

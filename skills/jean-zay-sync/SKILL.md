@@ -1,66 +1,58 @@
 ---
 name: jean-zay-sync
-description: Use the existing Jean Zay (Jean-Zay, JZ) cluster workflow for connecting, SSHFS mounts, local-to-remote synchronization, and remote work with jzstart. Use when the user mentions Jean Zay, JZ, jzstart, jzmount, or jzrsync in a cluster workflow.
+description: Synchronize local code and remote outputs with Jean Zay (Jean-Zay, JZ) using jzsync and Mutagen. Use for Jean Zay development, automatic result downloads, sync status, or SSHFS access.
 ---
 
 # Jean Zay sync
 
-Use the existing helpers in `~/configuration/remote_scripts/`. Read the relevant
-scripts before starting or troubleshooting; do not recreate their workflow.
-For configuration details, read the remote workflow section of
-`~/configuration/README.md`. Keep private connection values in local configuration.
+Use `jzsync [LOCAL_DIR] [SUBPATH_UNDER_WORK]`. It is an executable on PATH,
+not a shell alias. If the command is unavailable, invoke
+`~/configuration/scripts/jzsync` directly. When troubleshooting, read that script
+and `~/configuration/remote_scripts/mutagen.yml`.
 
-## Start the workflow
+The local directory defaults to the current directory. The remote subpath defaults
+to the local path relative to HOME under remote WORK. Sources outside HOME require
+an explicit subpath. The command reuses the SSH master or opens it with
+`ssh -MNf jz`; authentication may need user interaction. Keep the master open
+for subsequent remote commands and shared Mutagen sessions.
 
-`jzstart [LOCAL_DIR] [SUBPATH_UNDER_WORK]` is the setup and sync entry point.
-The alias lives in `.zshrc`; in an agent shell invoke the script directly:
+## Data flow
 
-```bash
-~/configuration/remote_scripts/start_jz.sh /path/to/local/project projects/example
-```
+Mutagen runs in the background: local code goes to Jean Zay; remote outputs return
+automatically, including untracked files and plots beside scripts. It deliberately
+does not use `.gitignore`, which may exclude outputs the user wants.
 
-LOCAL_DIR defaults to the current directory. Without the second argument, the
-remote subpath is derived from LOCAL_DIR relative to HOME, under remote WORK.
-For sources outside HOME, supply a remote subpath. Read the resolved destination
-from the logs. Inspect the source and check for an existing watcher before
-starting; keep the running session available while synchronization is needed.
+The shared YAML excludes `.cache`, `data`, `.git/**/*.lock`, `.venv`,
+`__pycache__`, `.DS_Store`, and `.env` files in both directions. Never remove these
+exclusions just to obtain a result. Export selected results outside `.cache` when
+needed.
 
-## Understand the three parts
+For regular checkouts, `.git` syncs both ways in the same session as the working
+tree. Git lock files are excluded. Avoid concurrent Git writes on both sides;
+flush and check for conflicts before switching sides. This is file synchronization,
+not an atomic Git operation. Linked worktrees/submodules with a `.git` file are
+rejected: use a clone. Compare HEAD and working-tree status after flushing; matching
+HEAD alone does not prove uncommitted code matches. Use diffs or hashes as needed.
 
-1. SSH opens or reuses a master connection for remote commands and transfers.
-2. SSHFS refreshes local mounts that expose live remote files. Writes through
-   these mounts change remote files directly. They are not the source checkout.
-3. Rsync copies the local checkout to remote WORK over SSH, independently of
-   SSHFS. Fswatch repeats the copy after local changes. No compute job is submitted.
+`two-way-safe` reports conflicting edits, but nonconflicting edits and deletions
+can propagate in either direction. Edit code locally; inspect conflicts before
+choosing a version. Do not force a reset or switch the code/output session to replica mode to clear errors.
 
-When the source contains a `.git` **directory**, `git ls-files` selects paths.
-Rsync copies current working-tree contents, including uncommitted edits and
-staged new files. Untracked files are excluded. Git metadata is also copied,
-excluding lock files. This is not a Git push or a checkout of committed content;
-no commit is needed to synchronize edits to an existing tracked file.
+## Agent operation
 
-The Git filter does not apply to repository subdirectories or linked worktrees
-with a `.git` file. These fall back to copying the whole source tree, including
-untracked and ignored files. Check the logged scope before relying on filtering.
+- The command prints a project file under `~/.cache/jean-zay-sync`. Use that file
+  with `mutagen project list|flush|pause|resume|terminate -f <project-file>`.
+- Before submitting a job, flush and inspect status for conflicts or scan errors.
+  Flush completion alone does not prove every file is conflict-free.
+- Sessions survive terminal/Codex exit. Reuse the existing project; do not create
+  a second manual session or terminate shared sync when your task ends.
+- A destination is pinned to its local source and policy. Exit 75 means a mismatch;
+  inspect the printed project file instead of overwriting it.
+- Independent agents use separate checkouts and disjoint remote directories.
+  Parent/child overlaps and sessions on other machines are not automatically
+  prevented. Manage by project file or session ID, not a potentially repeated name.
+- Remote files are polled every 1 second, including outputs written by compute
+  nodes on the shared filesystem. No compute job is submitted by jzsync.
 
-Edit the local source. Remote changes do not sync back and may be overwritten.
-Rsync does not delete remote files, so local deletions or renames can leave stale
-remote files. New untracked files need intentional inclusion in Git's index or
-a separate transfer; do not silently stage unrelated files.
-
-## Interpret logs and completion
-
-- `event=sync_scope` describes actual file selection.
-- `event=initial_sync_complete` confirms the first copy succeeded.
-- `event=handoff` only transfers control to the sync helper.
-- `event=watch_start` announces watcher startup, not a health check. Idle watching
-  can be silent; do not treat the long-running process as a hung command.
-- After later edits, check `event=sync_complete` and verify relevant remote files
-  before running work that depends on them.
-- Inspect `event=failed`, its stage and exit code, and underlying command errors.
-  Authentication/sudo fields indicate possible interaction, not an active prompt.
-
-Mount helpers can report success despite individual errors. Verify mount state
-when the task depends on SSHFS. Ctrl-C stops synchronization but leaves SSHFS
-mounts and the SSH master in place. Use the existing mount/unmount helpers when
-that is part of the requested task.
+SSHFS is optional and independent: use `mount_jz.sh` to browse live remote files.
+Do not unmount shared paths as routine cleanup. Mutagen does not need SSHFS.
