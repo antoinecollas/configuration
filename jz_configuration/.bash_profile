@@ -14,5 +14,9 @@ export PATH="$HOME/.local/bin:${WORK:+$WORK/.local/bin:}$HOME/.local/zsh-5.9/bin
 # load zsh
 # start zsh only for interactive shells
 if [[ $- == *i* ]]; then
-  exec zsh
+  if command -v zsh >/dev/null 2>&1; then
+    exec zsh
+  else
+    printf 'Zsh is unavailable; continuing with Bash. Check your tool paths and storage access.\n' >&2
+  fi
 fi
