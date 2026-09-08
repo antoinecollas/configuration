@@ -102,6 +102,11 @@ available, or keep a Bash prompt with a warning if it is missing or inaccessible
 If `~/.local` is a symlink to project storage, check access to its target when
 tools disappear.
 
+The cluster `.zshrc` stores uv caches in `$SCRATCH/uv-cache` and downloaded
+Python interpreters in `$SCRATCH/uv-python`. It also enables uv's
+`centralized-project-envs` preview feature for project environments. These
+settings apply when `SCRATCH` is set.
+
 ### Personal CLI helpers
 
 This repo now exposes `build_database_url` as a global shell command.

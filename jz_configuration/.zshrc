@@ -27,9 +27,10 @@ export TORCHINDUCTOR_CACHE_DIR=$WORK/torchinductor_cache
 export HF_HUB_OFFLINE=1
 export TRANSFORMERS_OFFLINE=1
 
-# Store uv caches and project environments on Jean Zay's fast scratch storage
+# Store uv caches, Python installations, and project environments on scratch
 if [[ -n "${SCRATCH:-}" ]]; then
   export UV_CACHE_DIR="${SCRATCH}/uv-cache"
+  export UV_PYTHON_INSTALL_DIR="${SCRATCH}/uv-python"
   export UV_PREVIEW_FEATURES="centralized-project-envs"
 fi
 
