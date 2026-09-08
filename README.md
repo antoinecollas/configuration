@@ -90,14 +90,6 @@ Use this for anything machine- or identity-specific:
 
 `~/.zshrc.local` is intentionally ignored by Git.
 
-### Cluster Bash startup
-
-`jz_configuration/.bashrc` loads `.bash_profile` for SSH commands.
-When `WORK` is missing, `.bash_profile` starts a login shell to read the cluster
-environment only if the current shell is not already a login shell. This prevents
-recursive `bash -lc` calls that can hang SSH startup. An unset `WORK` also skips
-the WORK tools directory in `PATH`. Interactive shells still switch to Zsh.
-
 ### Personal CLI helpers
 
 This repo now exposes `build_database_url` as a global shell command.
