@@ -96,10 +96,7 @@ Use this for anything machine- or identity-specific:
 When `WORK` is missing, `.bash_profile` starts a login shell to read the cluster
 environment only if the current shell is not already a login shell. This prevents
 recursive `bash -lc` calls that can hang SSH startup. An unset `WORK` also skips
-the WORK tools directory in `PATH`. Interactive shells switch to Zsh when it is
-available, or keep a Bash prompt with a warning if it is missing or inaccessible.
-If `~/.local` is a symlink to project storage, check access to its target when
-tools disappear.
+the WORK tools directory in `PATH`. Interactive shells still switch to Zsh.
 
 ### Personal CLI helpers
 
