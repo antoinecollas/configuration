@@ -93,10 +93,11 @@ Use this for anything machine- or identity-specific:
 ### Cluster Bash startup
 
 `jz_configuration/.bashrc` loads `.bash_profile` for SSH commands.
-When `WORK` is missing, `.bash_profile` starts a login shell to read the cluster
-environment only if the current shell is not already a login shell. This prevents
-recursive `bash -lc` calls that can hang SSH startup. An unset `WORK` also skips
-the WORK tools directory in `PATH`. Interactive shells switch to Zsh when it is
+For non-login shells, `.bash_profile` sources `/etc/profile` in the current shell
+to load the full cluster environment, including `WORK`, `SCRATCH`, `STORE`, and
+`IDRPROJ`. Login shells already load this file automatically. `FPATH` is cleared
+after initialization to avoid conflicts with Zsh. An unset `WORK` skips the WORK
+tools directory in `PATH`. Interactive shells switch to Zsh when it is
 available, or keep a Bash prompt with a warning if it is missing or inaccessible.
 If `~/.local` is a symlink to project storage, check access to its target when
 tools disappear.

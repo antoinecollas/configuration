@@ -1,12 +1,11 @@
+# Load the full cluster environment in this shell for non-login SSH commands.
+# Login shells already load /etc/profile automatically.
+if ! shopt -q login_shell; then
+  source /etc/profile
+fi
+
 # FPATH is used by some Fortran modules (e.g. Intel mkl), but it conflicts with zsh's fpath (function path).
 unset FPATH
-
-# Resolve WORK for non-interactive SSH commands, where the cluster profile is not loaded.
-# A login shell already loads /etc/profile; do not start another one from it.
-if [[ -z "${WORK:-}" ]] && ! shopt -q login_shell; then
-  WORK="$(bash -lc 'printf %s "$WORK"')"
-  export WORK
-fi
 
 # User tools installed in HOME or WORK, plus zsh.
 export PATH="$HOME/.local/bin:${WORK:+$WORK/.local/bin:}$HOME/.local/zsh-5.9/bin:$PATH"
