@@ -27,6 +27,7 @@ This repo is optimized for day-to-day reuse on macOS, with machine-specific over
 | `remote_scripts/` | SSHFS mount/unmount and rsync helpers for remote cluster workflows. |
 | `nvim/` | Neovim config (`init.lua`) and lockfile (`lazy-lock.json`). |
 | `jz_configuration/` | Additional cluster shell startup files (`.bashrc`, `.bash_profile`, `.zshrc`). |
+| `lumi_configuration/` | LUMI shell configuration and setup script. |
 | `starship.toml` | Starship prompt configuration. |
 | `generate_single_file.py` | Helper script that exports tracked source context into one Markdown file. |
 
@@ -106,6 +107,19 @@ The cluster `.zshrc` stores uv caches in `$SCRATCH/uv-cache` and downloaded
 Python interpreters in `$SCRATCH/uv-python`. It also enables uv's
 `centralized-project-envs` preview feature for project environments. These
 settings apply when `SCRATCH` is set.
+
+### LUMI shell setup
+
+On LUMI, run:
+
+```bash
+bash ~/configuration/lumi_configuration/setup.sh
+```
+
+Reconnect with SSH to use Zsh with the same theme and autosuggestions as Jean Zay.
+Setup backs up existing startup files and installs Oh My Zsh and its plugins.
+History, completion, terminal compatibility, and LUMI modules are configured automatically.
+Keep personal paths and account settings in `~/.zshrc.local`.
 
 ### Personal CLI helpers
 
