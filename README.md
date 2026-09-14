@@ -129,12 +129,9 @@ downloaded Python interpreters use `$FLASH/$USER/uv-python`. uv maintains the
 project's `.venv` link automatically. Explicit environment paths are not centralized.
 These settings configure storage; they do not install uv or migrate existing environments.
 
-The cluster shells set `UV_TORCH_BACKEND` to `cu128` on Jean Zay and `rocm6.4`
-on LUMI. For decoding, create the environment with `uv venv --python 3.12`,
-then install with `uv pip install --no-sources -e .` to bypass the project's
-CUDA index settings. Run scripts with
-`uv run --no-sync python <script>`. The backend setting applies to `uv pip`;
-plain `uv sync` or `uv run` can replace the selected GPU packages.
+For decoding, use `uv sync --group cuda` on Jean Zay or `uv sync --group rocm`
+on LUMI. Pass the same group to `uv run`, for example
+`uv run --group rocm python <script>`. Neither backend group is enabled by default.
 
 ### Personal CLI helpers
 
