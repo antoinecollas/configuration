@@ -201,15 +201,17 @@ Use one watcher per destination and disjoint destinations for separate checkouts
 Use `jzmount` / `jzumount` for optional SSHFS browsing. Avoid unmounting paths
 used by another process.
 
-The [Jean Zay sync skill](skills/jean-zay-sync/SKILL.md) is installed through a symlink:
+The [cluster sync skill](skills/cluster-sync/SKILL.md) is installed through a symlink:
 
 ```bash
 mkdir -p ~/.codex/skills
-ln -s ~/configuration/skills/jean-zay-sync ~/.codex/skills/jean-zay-sync
+ln -s ~/configuration/skills/cluster-sync ~/.codex/skills/cluster-sync
 ```
 
-Use `$jean-zay-sync` or mention Jean Zay. Job submission follows the target
-project's instructions.
+Use `$cluster-sync` or mention Jean Zay (`jean-zay`, `jz`) or LUMI (`lumi`).
+The skill covers `jzsync` and `lumisync`; job submission follows the target
+project's instructions. Replace an existing `jean-zay-sync` skill symlink when
+upgrading to this name.
 
 ## Remote scripts (VM workflow)
 
