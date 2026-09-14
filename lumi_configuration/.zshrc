@@ -55,6 +55,9 @@ if [[ -n "${LUMI_ACCOUNT:-}" ]]; then
   export FLASH="${FLASH:-/flash/$LUMI_ACCOUNT}"
 fi
 
+# Select ROCm for uv pip installations.
+export UV_TORCH_BACKEND=rocm6.4
+
 # Match Jean Zay's centralized uv environments, using personal flash storage.
 if [[ -n "${FLASH:-}" ]]; then
   export UV_CACHE_DIR="${UV_CACHE_DIR:-$FLASH/$USER/uv-cache}"

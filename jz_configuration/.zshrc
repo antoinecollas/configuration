@@ -27,6 +27,9 @@ export TORCHINDUCTOR_CACHE_DIR=$WORK/torchinductor_cache
 export HF_HUB_OFFLINE=1
 export TRANSFORMERS_OFFLINE=1
 
+# Select CUDA for uv pip installations.
+export UV_TORCH_BACKEND=cu128
+
 # Store uv caches, Python installations, and project environments on scratch
 if [[ -n "${SCRATCH:-}" ]]; then
   export UV_CACHE_DIR="${SCRATCH}/uv-cache"
