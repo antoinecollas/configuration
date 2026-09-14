@@ -46,3 +46,18 @@ alias ll='ls -alh'
 if [[ -r "$HOME/.zshrc.local" ]]; then
   source "$HOME/.zshrc.local"
 fi
+
+# HOME is supplied by LUMI. Select the project in ~/.zshrc.local.
+export HOME
+if [[ -n "${LUMI_ACCOUNT:-}" ]]; then
+  export PROJECT="${PROJECT:-/project/$LUMI_ACCOUNT}"
+  export SCRATCH="${SCRATCH:-/scratch/$LUMI_ACCOUNT}"
+  export FLASH="${FLASH:-/flash/$LUMI_ACCOUNT}"
+fi
+
+# Match Jean Zay's centralized uv environments, using personal flash storage.
+if [[ -n "${FLASH:-}" ]]; then
+  export UV_CACHE_DIR="${UV_CACHE_DIR:-$FLASH/$USER/uv-cache}"
+  export UV_PYTHON_INSTALL_DIR="${UV_PYTHON_INSTALL_DIR:-$FLASH/$USER/uv-python}"
+  export UV_PREVIEW_FEATURES="centralized-project-envs"
+fi

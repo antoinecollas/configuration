@@ -72,7 +72,7 @@ Optional: `nvim`, Conda, Jupyter (`nbconvert`), `starship`, `zsh-autosuggestions
 - Adds `~/configuration/remote_scripts` to `PATH`.
 - Defines alias: `gs` -> `gh stack`.
 - Defines aliases: `jzmount` -> `mount_jz.sh`, `jzumount` -> `umount_jz.sh`.
-- Exposes `jzsync` as an executable from `~/configuration/scripts`, including in
+- Exposes `jzsync` and `lumisync` as executables from `~/configuration/scripts`, including in
   non-interactive shells that inherit this PATH.
 - Defines alias: `vmrsync` -> `vmrsync.sh`.
 - Includes helper functions: `open_notebook` (convert/open notebook PDF), `wt` (create worktree + launch codex), `wtrm` (remove worktree + local branch).
@@ -120,6 +120,14 @@ Reconnect with SSH to use Zsh with the same theme and autosuggestions as Jean Za
 Setup backs up existing startup files and installs Oh My Zsh and its plugins.
 History, completion, terminal compatibility, and LUMI modules are configured automatically.
 Keep personal paths and account settings in `~/.zshrc.local`.
+Set `export LUMI_ACCOUNT=project_<id>` there to expose `PROJECT`, `SCRATCH`,
+and `FLASH` as the shared project storage roots. `HOME` keeps LUMI's existing
+user home directory. Explicit path overrides in `~/.zshrc.local` are preserved.
+Like Jean Zay, LUMI enables uv's `centralized-project-envs` preview feature.
+Its cache and default project environments use `$FLASH/$USER/uv-cache`, and
+downloaded Python interpreters use `$FLASH/$USER/uv-python`. uv maintains the
+project's `.venv` link automatically. Explicit environment paths are not centralized.
+These settings configure storage; they do not install uv or migrate existing environments.
 
 ### Personal CLI helpers
 
@@ -145,21 +153,28 @@ If you pass `--protocol postgres`, the helper rewrites it to
 
 Use `build_database_url --help` to see the built-in helper text.
 
-## Remote scripts (Jean-Zay workflow)
+## Remote scripts (Jean Zay and LUMI)
 
-`jzsync` copies local code to Jean Zay with rsync, then watches local changes
-with fswatch. Use `--once` to copy and exit before submitting jobs.
+`jzsync` and `lumisync` share `scripts/hpcsync`. They copy code with rsync,
+then watch local changes with fswatch. Use `--once` to copy and exit before submitting jobs.
 
 ```bash
 brew install rsync fswatch
 jzsync --once ~/projects/example
 jzsync ~/projects/example projects/example-agent-a
+lumisync --once ~/projects/example
 ```
+
+For LUMI, set `export LUMI_WORK=/project/project_<id>/<user>` in
+`~/.zshrc.local`, then reload it. This keeps code in your personal workspace.
+`JZ_WORK` optionally overrides Jean Zay’s remote WORK. The SSH aliases are
+`jz` and `lumi`; each uses its own SSH master. Set `LUMI_FSWATCH_LATENCY` or
+`JZ_FSWATCH_LATENCY` to adjust the watch interval (default: one second).
 
 The local directory defaults to the current directory. The destination defaults
 to its path relative to HOME under remote WORK. Paths outside HOME need an
 explicit subpath. The command reuses or opens an SSH master; the remote login
-shell must expose WORK and provide `realpath`. Both endpoints need rsync with
+shell must expose WORK unless overridden, and provide `realpath`. Both endpoints need rsync with
 `--protect-args` support.
 
 Git checkouts copy tracked files, including local edits. Stage new files with
