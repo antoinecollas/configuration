@@ -20,7 +20,7 @@ This repo is optimized for day-to-day reuse on macOS, with machine-specific over
 | Path | Purpose |
 | --- | --- |
 | `.zshrc` | Main Zsh config (aliases, prompt, helper functions, conda init, and tool PATHs). |
-| `.tmux.conf` | Tmux configuration with mouse support enabled. |
+| `.tmux.conf` | Tmux mouse support; selections stay highlighted until copied with `Ctrl+C`. Press `q` to cancel. |
 | `.zshrc.local.example` | Template for local machine overrides. |
 | `scripts/` | Small personal CLI helpers available from the shell. |
 | `skills/` | Personal Codex skills, symlinked into `~/.codex/skills`. |
@@ -47,6 +47,11 @@ ln -sf ~/configuration/.tmux.conf ~/.tmux.conf
 mkdir -p ~/.config/nvim
 ln -sf ~/configuration/nvim/init.lua ~/.config/nvim/init.lua
 ```
+
+For `⌘C` to copy and clear tmux selections, add an iTerm2 mapping under
+Settings → Profiles → Keys → Key Mappings: `⌘C` → **Send Hex Code** → `0x03`.
+This replaces iTerm2's normal copy shortcut for that profile. Outside tmux copy mode,
+it sends `Ctrl+C` and may interrupt the running command; use Edit → Copy for native selections.
 
 Create local overrides:
 
